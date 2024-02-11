@@ -16,10 +16,10 @@ export const establishConnection=async()=>{
     try{
         // https://mongoosejs.com/docs/5.x/docs/deprecations.html
         await mongoose.connect(URI,{
-            useNewUrlParser: true,
-            useFindAndModify: false,
-            useCreateIndex:true,
-            useUnifiedTopology:true,
+            // useNewUrlParser: true,
+            // useFindAndModify: false,
+            // useCreateIndex:true,
+            // useUnifiedTopology:true,
         })
         connection=true
         console.log('MongoDB connected')

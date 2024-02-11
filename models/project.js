@@ -42,10 +42,10 @@ const projectSchema = new Schema({
         type: String,
         default:"Not Yet Deployed"
     },
-    comments:{
+    comments:[{
         type:Schema.Types.ObjectId,
         ref:"Comment"
-    },
+    }],
     tasks:{
         type:Schema.Types.ObjectId,
         ref:"Task"

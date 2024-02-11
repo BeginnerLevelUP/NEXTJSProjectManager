@@ -1,5 +1,6 @@
 import { Schema, model,models } from "mongoose";
-import {bcrypt} from "bcrypt"
+import bcrypt from "bcrypt";
+
 const userSchema = new Schema({
     username: {
         type: String,
@@ -18,10 +19,10 @@ const userSchema = new Schema({
         required: true,
         minlength: [8, 'Password must be at least 8 characters long']
     },
-    projects:{
+    projects:[{
         type:Schema.Types.ObjectId,
         ref:"Project"
-    }
+    }]
 });
 
 
@@ -41,5 +42,5 @@ userSchema.methods.isCorrectPassword = async function (password) {
 
 const User = models.User || model('User', userSchema);
 
-module.exports = User;
+export default User;
 
