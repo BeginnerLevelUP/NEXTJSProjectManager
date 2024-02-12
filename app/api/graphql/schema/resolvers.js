@@ -6,11 +6,20 @@ const resolvers = {
   Query: {
     //Query Users
     users: async () => {
-      try {
-        return await User.find({}).populate('projects');
-      } catch (error) {
-        throw new Error("Failed to fetch users");
-      }
+  try {
+return await User.find({}).populate({
+  path: 'projects',
+  populate: {
+    path: 'tasks',
+    populate: {
+      path: 'assignedTo' 
+    }
+  }
+});
+
+  } catch (error) {
+    throw new Error("Failed to fetch users");
+  }
     },
     user: async (_, { id }) => {
       try {
@@ -47,6 +56,23 @@ const resolvers = {
         return await Comment.findById(id);
       } catch (error) {
         throw new Error("Failed to fetch comment");
+      }
+    },
+    //Query Tasks
+    tasks: async () => {
+      try {
+        const tasks = await Task.find();
+        return tasks;
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    task: async (_, { id }) => {
+      try {
+        const task = await Task.findById(id);
+        return task;
+      } catch (err) {
+        throw new Error(err);
       }
     }
   },
@@ -85,7 +111,7 @@ const resolvers = {
       }
     },
     //Project Mutations
-createProject: async (_, { userId, name, description, completed, gitRepoUrl, deployedSite }) => {
+    createProject: async (_, { userId, name, description, completed, gitRepoUrl, deployedSite }) => {
   try {
     // Check if the user exists
     const user = await User.findById(userId);
@@ -113,7 +139,7 @@ createProject: async (_, { userId, name, description, completed, gitRepoUrl, dep
   } catch (error) {
     throw new Error("Could not create project");
   }
-}
+    }    
 ,
     updateProject: async (_, { id, name, description, completed, gitRepoUrl, deployedSite }) => {
       try {
@@ -142,7 +168,8 @@ createProject: async (_, { userId, name, description, completed, gitRepoUrl, dep
           text,
           user
         });
-        const currentProject=await Project.findByIdAndUpdate(projectId,
+        const currentProject=await Project.findByIdAndUpdate(
+          projectId,
           {$set:{comments:newComment._id}},
           {new:true}
           )
@@ -213,7 +240,48 @@ createProject: async (_, { userId, name, description, completed, gitRepoUrl, dep
       } catch (error) {
         throw new Error("Could not delete reply");
       }
+    },
+    //Task Mutations
+createTask: async (_, { name, description, dueDate, assignedTo, ranking, status, projectId }) => {
+  try {
+    // Check if the project exists
+    const project = await Project.findById(projectId);
+    if (!project) {
+      throw new Error('Project not found');
     }
+
+    // Create the task
+    const task = await Task.create({ name, description, dueDate, assignedTo, ranking, status });
+
+    // Associate the task with the project
+    await Project.findByIdAndUpdate(
+      project._id,
+      { $addToSet: { tasks: task._id } },
+      { new: true }
+    );
+
+    return task;
+  } catch (err) {
+    throw new Error(err);
+  }
+},
+  updateTask: async (_, {taskId, name, description, status, dueDate, assignedTo, ranking }) => {
+      try {
+        const updatedTask = await Task.findByIdAndUpdate(taskId, { name, description, status, dueDate, assignedTo, ranking }, { new: true });
+        return updatedTask;
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    deleteTask: async (_, { id }) => {
+      try {
+        const deletedTask = await Task.findByIdAndDelete(id);
+        return deletedTask;
+      } catch (err) {
+        throw new Error(err);
+      }
+    }
+    
   }
   }
 

@@ -15,7 +15,8 @@ const taskSchema = new Schema({
         default: 'Pending'
     },
     dueDate: {
-        type: Date
+        type: Date,
+        default:Date.now()
     },
     assignedTo: [{
         type: Schema.Types.ObjectId,
@@ -28,11 +29,11 @@ const taskSchema = new Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now()
     }
 });
 
-const Task =  models.Project || model('Task', taskSchema);
+const Task =  models.Task || model('Task', taskSchema);
 
 export default Task;
 

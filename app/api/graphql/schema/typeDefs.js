@@ -19,6 +19,7 @@ const typeDefs = gql`
     gitRepoUrl: String
     deployedSite: String
     comments: [Comment]
+    tasks:[Task]
   }
 
   type Comment {
@@ -36,11 +37,15 @@ const typeDefs = gql`
     createdAt: String
   }
 
-
-  input CreateCommentInput {
-    text: String!
-    user: ID!
-    projectId: ID!
+    type Task {
+    _id: ID
+    name: String
+    description: String
+    status: String
+    dueDate: String
+    assignedTo: [User]
+    ranking: String
+    createdAt: String
   }
 
   input CreateReplyInput {
@@ -56,6 +61,8 @@ projects: [Project]
 project(id: ID!): Project
 comments: [Comment]
 comment(id: ID!): Comment
+tasks: [Task!]!
+task(id: ID!): Task
 
 }
   type Mutation {
@@ -75,13 +82,31 @@ comment(id: ID!): Comment
     deleteProject(id: ID!): Project
 
 
-    createComment(input: CreateCommentInput!): Comment
+    createComment( 
+    text: String!
+    user: ID!
+    projectId: ID!
+    ): Comment
     updateComment(id: ID!, text: String!): Comment
     deleteComment(id: ID!): Comment
     createReply(input: CreateReplyInput!): Comment
     updateReply(commentId: ID!, replyId: ID!, text: String!): Comment
     deleteReply(commentId: ID!, replyId: ID!): Comment
+
+    createTask(
+  name: String!, 
+  description: String!, 
+  dueDate: String,
+   assignedTo: [ID], 
+   ranking: String, 
+   status: String, 
+   projectId: ID!): Task
+
+   updateTask(taskId: ID!, name: String, description: String, status: String, dueDate: String, assignedTo: [ID!], ranking: String): Task
+  deleteTask(id: ID!): Task
   }
+
+
 `;
 
 export default typeDefs;

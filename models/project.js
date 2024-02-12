@@ -46,10 +46,10 @@ const projectSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"Comment"
     }],
-    tasks:{
+    tasks:[{
         type:Schema.Types.ObjectId,
         ref:"Task"
-    }
+    }]
 });
 
 const Project = models.Project|| model('Project', projectSchema);
