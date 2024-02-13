@@ -1,5 +1,6 @@
 
 "use client"
+import ReduxProvider from "./components/redux-provider"
 import { useState,useEffect } from "react"
 import {signIn,signOut,useSession,getProviders} from "next-auth/react"
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
   )
 
   return (
+    <ReduxProvider>
     <div>
       <h1>Sign up please work or fuck me</h1>
       {session && session.user ? (
@@ -33,5 +35,7 @@ export default function Home() {
         ))
       )}
     </div>
+    </ReduxProvider>
+
   );
 }
