@@ -12,7 +12,24 @@ Update Reply
 */
 const commentSlice = createSlice({
   name: 'comments',
-  initialState: [],
+  initialState: [
+    {
+      comment_id:1,
+      project_id:1,
+      text:"first comment",
+      user:null,
+      createdAt:Date.now(),
+      replies:[
+        {
+          comment_id:1,
+          reply_id:1,
+          text:'first reply',
+          user:null,
+          createdAt:Date.now()
+        }
+      ]
+    }
+  ],
   reducers: {
     // Add comment
     addComment(state, action) {

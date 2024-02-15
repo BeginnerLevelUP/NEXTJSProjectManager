@@ -9,7 +9,19 @@ Assign Task
 */
 const taskSlice = createSlice({
   name: 'tasks',
-  initialState: [],
+  initialState: [
+    {
+      task_id:1,
+      project_id:1,
+      createdAt:Date.now(),
+      name:"First Task",
+      description: "A Description of your first task",
+      status:"Pending",
+      dueDate:null,
+      assignedTo:[],
+      ranking:"Regular"
+    }
+  ],
   reducers: {
     // Get tasks from project
     getTasks(state, action) {
