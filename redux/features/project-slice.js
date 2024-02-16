@@ -3,7 +3,6 @@ import {  createSlice } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import taskReducer from "@/redux/features/task-slice"
 import commentReducer from "@/redux/features/comment-slice"
-
 // Features of Project Slice
 /*
 Get Users Projects
@@ -57,8 +56,8 @@ const projectSlice = createSlice({
         state.projects[index] = updatedProject;
       }
     },
-  },
 
+  }
 });
 
 export const {
