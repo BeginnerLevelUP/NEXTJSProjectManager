@@ -3,7 +3,7 @@
 import { useState,useEffect } from "react"
 import {signIn,signOut,useSession,getProviders} from "next-auth/react"
 import { useDispatch,useSelector } from "react-redux"
-import { fetchUser} from "./redux/features/user-slice"
+import { fetchUser} from "../redux/features/user-slice"
 export default function Home() {
 
 const dispatch=useDispatch()

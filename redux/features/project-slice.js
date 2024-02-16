@@ -1,8 +1,8 @@
 
 import {  createSlice } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
-import taskReducer from "@/app/redux/features/task-slice"
-import commentReducer from "@/app/redux/features/comment-slice"
+import taskReducer from "@/redux/features/task-slice"
+import commentReducer from "@/redux/features/comment-slice"
 
 // Features of Project Slice
 /*
