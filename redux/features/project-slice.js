@@ -25,6 +25,7 @@ const projectSlice = createSlice({
       completed: false,
       gitrepo: "No Repositroy Link",
       deployedSite: "Not Yet Deployed",
+      members:[]
     },
 
   ],
