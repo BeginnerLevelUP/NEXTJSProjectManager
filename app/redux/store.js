@@ -5,7 +5,7 @@ import rootReducer from './features/project-slice'
 export const makeStore = () => {
   return configureStore({
      reducer: {
-    // user:userSlice,
+    user:userSlice,
     projects:rootReducer,
   },
   })

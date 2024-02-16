@@ -1,10 +1,12 @@
 
 "use client"
-
 import { useState,useEffect } from "react"
 import {signIn,signOut,useSession,getProviders} from "next-auth/react"
 import { useDispatch,useSelector } from "react-redux"
+import { fetchUser} from "./redux/features/user-slice"
 export default function Home() {
+
+const dispatch=useDispatch()
  const projects = useSelector(({projects}) => projects.projects);
   const comments= useSelector(({projects}) => projects.comments)
   const tasks= useSelector(({projects}) => projects.tasks)
@@ -20,19 +22,33 @@ export default function Home() {
     },[]
   )
 
+
+    if (session) {
+      const user=dispatch(fetchUser(session?.user?.id));
+    }
+
+
+
   return (
 
     <div>
       <h1>Sign up </h1>
       {session && session.user ? (
-        <button onClick={() => signOut()}>Sign out</button>
+        <button 
+        onClick={() =>
+           {
+            signOut()
+          }}
+        >
+          Sign out
+          </button>
       ) : (
         providers &&
         Object.values(providers).map((provider) => (
           <button
             type="button"
             key={provider.id}
-            onClick={() => signIn(provider.id)}
+            onClick={() =>  signIn(provider.id) }
           >
             Sign up with {provider.name}
           </button>
