@@ -20,6 +20,7 @@ const typeDefs = gql`
     deployedSite: String
     comments: [Comment]
     tasks:[Task]
+    members:[User]
   }
 
   type Comment {
@@ -80,7 +81,8 @@ task(id: ID!): Task
     
     updateProject(id: ID!, name: String, description: String, completed: Boolean, gitRepoUrl: String, deployedSite: String): Project
     deleteProject(id: ID!): Project
-
+    addProjectMember(projectId: ID!, userId: ID!): Project
+    removeProjectMember(projectId: ID!, userId: ID!): Project
 
     createComment( 
     text: String!

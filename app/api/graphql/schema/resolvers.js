@@ -161,6 +161,41 @@ return await User.find({}).populate({
         throw new Error("Could not delete project");
       }
     },
+    addProjectMember: async (_, { projectId, userId }) => {
+    try {
+      // Check if the project and user exist
+      const project = await Project.findById(projectId);
+      const user = await User.findById(userId);
+      if (!project || !user) {
+        throw new Error("Project or user not found");
+      }
+
+      // Add user to project members
+      project.members.push(userId);
+      await project.save();
+
+      return project;
+    } catch (error) {
+      throw new Error("Could not add member to project");
+    }
+  },
+   removeProjectMember: async (_, { projectId, userId }) => {
+    try {
+      // Check if the project exists
+      const project = await Project.findById(projectId);
+      if (!project) {
+        throw new Error("Project not found");
+      }
+
+      // Remove user from project members
+      project.members.pull(userId);
+      await project.save();
+
+      return project;
+    } catch (error) {
+      throw new Error("Could not remove member from project");
+    }
+  },
     //Comment Mutations and Reply
      createComment: async (_, { text, user,projectId }) => {
       try {

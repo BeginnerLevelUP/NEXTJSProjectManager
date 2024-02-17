@@ -49,9 +49,13 @@ const projectSchema = new Schema({
     tasks:[{
         type:Schema.Types.ObjectId,
         ref:"Task"
+    }],
+    members:[{
+        type:Schema.Types.ObjectId,
+        ref:"User"
     }]
 });
-
+//add in resolvers typedefs and in reducer 
 const Project = models.Project|| model('Project', projectSchema);
 
 export default Project;
