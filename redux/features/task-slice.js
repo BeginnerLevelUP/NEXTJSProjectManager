@@ -23,10 +23,6 @@ const taskSlice = createSlice({
     }
   ],
   reducers: {
-    // Get tasks from project
-    getTasks(state, action) {
-      // Handle fetching tasks from the backend or any other logic
-    },
     // Add task
     addTask(state, action) {
       const newTask = action.payload;
@@ -57,7 +53,6 @@ const taskSlice = createSlice({
 });
 
 export const {
-  getTasks,
   addTask,
   removeTask,
   updateTask,

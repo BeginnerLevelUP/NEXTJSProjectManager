@@ -30,12 +30,9 @@ const projectSlice = createSlice({
 
   ],
   reducers: {
-    getProjects(state,action){
-      return action.payload
-    },
     // Create project
     addProject(state, action) {
-      state.projects.push(action.payload);
+      state.push(action.payload);
     },
     // Delete project
     removeProject(state, action) {
@@ -62,7 +59,6 @@ const projectSlice = createSlice({
 });
 
 export const {
-  getProjects,
   addProject,
   removeProject,
   addUserToProject,

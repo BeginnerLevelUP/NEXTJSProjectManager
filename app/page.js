@@ -3,7 +3,10 @@
 import { useState,useEffect } from "react"
 import {signIn,signOut,useSession,getProviders} from "next-auth/react"
 import { useDispatch,useSelector } from "react-redux"
-import { fetchUser,clearUser} from "@/redux/features/user-slice"
+import { setUser,clearUser} from "@/redux/features/user-slice"
+import { addProject} from "@/redux/features/project-slice"
+import { addTask } from "@/redux/features/task-slice"
+import { addComment,addReply } from "@/redux/features/comment-slice"
 export default function Home() {
 
 const dispatch=useDispatch()
@@ -22,10 +25,27 @@ const dispatch=useDispatch()
     },[]
   )
 
+useEffect(() => {
+  if (session) {
+    console.log(session)
+    const user = session.user;
+    const projects = session.projects||[];
+    const tasks=session.tasks||[]
+    const comments=session.comments||[]
+    dispatch(setUser(user))
 
-    if (session) {
-      const user=dispatch(fetchUser(session?.user?.id));
-    }
+    projects.forEach(project => {
+        dispatch(addProject(project));  
+    });
+    tasks.forEach(task => {
+        dispatch(addTask(task));  
+    });
+    comments.forEach(comment => {
+        dispatch(addComment(comment));  
+    });
+
+  }
+}, [session]);
 
 
 
@@ -49,7 +69,9 @@ const dispatch=useDispatch()
           <button
             type="button"
             key={provider.id}
-            onClick={() =>  signIn(provider.id) }
+            onClick={() => 
+               signIn(provider.id) 
+              }
           >
             Sign up with {provider.name}
           </button>
@@ -66,47 +88,44 @@ const dispatch=useDispatch()
           <p><strong>Git Repository:</strong> {project.gitrepo}</p>
           <p><strong>Deployed Site:</strong> {project.deployedSite}</p>
           <h3>Comments</h3>
-          <ul>
-            {comments
-              .filter((comment) => comment.project_id === project._id)
-              .map((comment) => (
-                <>
-                <li key={comment.id}>
-                  {comment.text}
-                  <p><strong>User:</strong> {comment.user ? comment.user : 'Unknown'}</p>
-                  </li>
+<ul>
+  {comments
+    .filter((comment) => comment.project_id === project._id)
+    .map((comment) => (
+      <li key={comment.id}>
+        {comment.text}
+        <p><strong>User:</strong> {comment.user ? comment.user : 'Unknown'}</p>
+        <ul>
+          {comment.replies.map((reply) => (
+            <li key={reply.reply_id}>
+              <p><strong>Text:</strong> {reply.text}</p>
+              <p><strong>User:</strong> {reply.user ? reply.user : 'Unknown'}</p>
+            </li>
+          ))}
+        </ul>
+      </li>
+  ))}
+</ul>
 
-                  <ul>
-            {comment.replies.map((reply) => (
-              <li key={reply.reply_id}>
-                <p><strong>Text:</strong> {reply.text}</p>
-                <p><strong>User:</strong> {reply.user ? reply.user : 'Unknown'}</p>
-              </li>
-            ))}
-          </ul>
-
-                </>
-                
-              ))}
-          </ul>
           <h3>Tasks</h3>
-          <ul>
-            {tasks
-              .filter((task) => task.project_id === project._id)
-              .map((task) => (
-        <div key={task.task_id}>
+<ul>
+  {tasks
+    .filter((task) => task.project_id === project._id)
+    .map((task) => (
+      <li key={task.task_id}>
+        <div>
           <p><strong>Task ID:</strong> {task.task_id}</p>
           <p><strong>Project ID:</strong> {task.project_id}</p>
-          {/* <p><strong>Created At:</strong> {new Date(task.createdAt).toLocaleString()}</p> */}
           <p><strong>Name:</strong> {task.name}</p>
           <p><strong>Description:</strong> {task.description}</p>
           <p><strong>Status:</strong> {task.status}</p>
-          {/* <p><strong>Due Date:</strong> {task.dueDate ? new Date(task.dueDate).toLocaleString() : 'Not specified'}</p> */}
           <p><strong>Assigned To:</strong> {task.assignedTo.length > 0 ? task.assignedTo.join(', ') : 'None'}</p>
           <p><strong>Ranking:</strong> {task.ranking}</p>
         </div>
-              ))}
-          </ul>
+      </li>
+  ))}
+</ul>
+
         </div>
       ))}
     </div>
