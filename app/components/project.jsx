@@ -1,6 +1,5 @@
 
  "use client"
- 
 import React, { useState,useEffect } from 'react';
 
  export default function Project(){
@@ -13,6 +12,9 @@ import React, { useState,useEffect } from 'react';
   }, []);
 return(
     <>
+     <div className='my-5 text-center h-screen w-screen'>
+<div>
+
 <nav
   id="sidenav-3"
   class="fixed left-0 top-0 z-[1035] h-screen w-60 -translate-x-full overflow-hidden bg-zinc-800 shadow-[0_4px_12px_0_rgba(0,0,0,0.07),_0_2px_4px_rgba(0,0,0,0.05)] data-[te-sidenav-hidden='false']:translate-x-0"
@@ -149,12 +151,10 @@ return(
   </ul>
 </nav>
 
-<div className=' bg-gray-800 m-auto my-5 container text-center place-content-center'>
-
 <div className='flex justify-center '>
 
 <button
-  class="mt-10 inline-block rounded bg-emerald-400 px-6 py-2.5 text-xs font-medium uppercase leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-800 active:shadow-lg"
+  class="mt-10 inline-block rounded bg-primary px-6 py-2.5 text-xs font-medium uppercase leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-800 active:shadow-lg"
   data-te-sidenav-toggle-ref
   data-te-target="#sidenav-3"
   aria-controls="#sidenav-3"
@@ -174,7 +174,7 @@ return(
 </button>
 
 <nav
-  class="relative flex w-full flex-wrap items-center justify-between bg-gray-800 py-3 text-neutral-500 shadow-lg hover:text-neutral-700 focus:text-neutral-700 dark:bg-neutral-600 lg:flex-wrap lg:justify-start"
+  class="relative flex w-full flex-wrap items-center justify-between bg-neutral-100 py-3 text-neutral-500 shadow-lg hover:text-neutral-700 focus:text-neutral-700 dark:bg-neutral-600 lg:flex-wrap lg:justify-start"
   data-te-navbar-ref>
   <div class="flex w-full flex-wrap items-center justify-between px-3">
     <nav class="bg-grey-light w-full rounded-md" aria-label="breadcrumb">
@@ -217,17 +217,20 @@ return(
 
 </div>
 
-<div class='flex justify-center gap-4 h-screen my-5 px-4'>
-  <div class='bg-emerald-900 w-1/2 '>
+<div class='flex justify-center gap-4 grow'>
+  <div class='bg-green h-full'>
     <h1>sfd</h1>
   </div>
 
-  <div class='bg-emerald-400 w-1/2'> 
-  <h1>glaf</h1>
+  <div class='bg-emerald-400'> 
+    <button class="bg-indigo-500 ...">
+      Save changes
+    </button>
   </div>
 </div>
 
 
+</div>
 </div>
     </>
 

@@ -1,10 +1,13 @@
 
 "use client"
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect,useLayoutEffect,useRef } from 'react';
 import Project from '../components/project';
-
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 function LoginForm() {
+  const introDiv=useRef(null)
+  const demo=useRef(null)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -28,14 +31,48 @@ function LoginForm() {
     };
     init();
   }, []);
+
+    useEffect( () => { (
+      async () => {
+
+          const LocomotiveScroll = (await import('locomotive-scroll')).default
+
+          const locomotiveScroll = new LocomotiveScroll();
+      }
+    )()
+
+  }, [])
+
+useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const timeline = gsap.timeline({
+        scrollTrigger: {
+            trigger: document.documentElement,
+            scrub: true,
+            start: "top",
+            end: "+=500x",
+            markers: true
+        }
+    });
+
+    timeline
+        .from(demo.current, { clipPath: `inset(50%)`, filter: "hue-rotate(180deg)" })
+        .to(demo.current, { clipPath: `inset(0%)`, filter: "hue-rotate(0deg)" }); 
+
+});
+
+
   return (
 <>
-<section class="background-radial-gradient mb-40 overflow-hidden">
-   {/* <!---- Jumbotron --> */}
-  <div class="px-6 py-12 text-center md:px-12 lg:py-24 lg:text-left">
+<body  class=" bg-slate-600">
+
+
+<header class=" bg-emerald-950 overflow-hidden" >   
+  <div  ref={introDiv} data-scroll data-scroll-speed=".5" class="px-6 py-12 text-center md:px-12 lg:py-24 lg:text-left">
     <div class="w-100 mx-auto text-neutral-800 sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
       <div class="grid items-center gap-12 lg:grid-cols-2">
-        <div class="mt-12 lg:mt-0" >
+        <div   class="mt-12 lg:mt-0" >
           <h1
             class="mt-0 mb-12 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl text-[hsl(218,81%,95%)]">
             The best offer <br /><span class="text-[hsl(218,81%,75%)]">for your business</span>
@@ -44,6 +81,7 @@ function LoginForm() {
 
           </p>
         </div>
+
         <div class="relative mb-12 lg:mb-0">
           <div id="radius-shape-1" class="absolute rounded-full shadow-lg"></div>
           <div id="radius-shape-2" class="absolute shadow-lg"></div>
@@ -146,9 +184,28 @@ function LoginForm() {
       </div>
     </div>
   </div>
-   {/* {/* <!------ Jumbotron --> */}
+</header>
+<main class="flex  flex-col transform rotate-0 bg-slate-600 p-2 text-center ">
+
+<section>
+
+
 </section>
+
+
+
+<section ref={demo}>
+<aside>
+  <h2 class=' text-5xl font-black relative top-100'>Demo</h2>
+</aside>
 <Project></Project>
+<aside>
+   <h2 class='text-5xl font-black'>Test it</h2>
+</aside>
+</section>
+
+</main>
+
 
 {/* <!---- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com --> */} 
 {/* <!---- Footer container --> */}
@@ -375,6 +432,8 @@ function LoginForm() {
     >
   </div>
 </footer>
+
+</body>
 </>
 
   );
