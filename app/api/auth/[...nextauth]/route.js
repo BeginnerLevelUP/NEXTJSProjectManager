@@ -24,6 +24,7 @@ const handler = NextAuth({
   callbacks:{
 session: async ({ session }) => {
   try {
+    await establishConnection()
     const currentUser = await User.findOne({ email: session.user.email })
       .populate({
         path: 'projects',
@@ -47,7 +48,7 @@ session: async ({ session }) => {
       session.projects = updatedProjects; // Assigning updatedProjects array back to session.projects
     }
 
-    await session.save(); // Save session changes if necessary
+ 
   } catch (error) {
     console.error("Error fetching user projects:", error);
   }
