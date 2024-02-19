@@ -51,14 +51,14 @@ useLayoutEffect(() => {
             trigger: document.documentElement,
             scrub: true,
             start: "top",
-            end: "+=500x",
+            end: "+=590x",
             markers: true
         }
     });
 
     timeline
         .from(demo.current, { clipPath: `inset(50%)`, filter: "hue-rotate(180deg)" })
-        .to(demo.current, { clipPath: `inset(0%)`, filter: "hue-rotate(0deg)" }); 
+        .to(demo.current, { clipPath: `inset(0%)`, filter: "hue-rotate(0deg)" },0); 
 
 });
 
@@ -69,7 +69,7 @@ useLayoutEffect(() => {
 
 
 <header class=" bg-emerald-950 overflow-hidden" >   
-  <div  ref={introDiv} data-scroll data-scroll-speed=".5" class="px-6 py-12 text-center md:px-12 lg:py-24 lg:text-left">
+  <div  ref={introDiv}  data-scroll  data-scroll-speed=".5" class="px-6 py-12 text-center md:px-12 lg:py-24 lg:text-left">
     <div class="w-100 mx-auto text-neutral-800 sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
       <div class="grid items-center gap-12 lg:grid-cols-2">
         <div   class="mt-12 lg:mt-0" >
@@ -187,22 +187,32 @@ useLayoutEffect(() => {
 </header>
 <main class="flex  flex-col transform rotate-0 bg-slate-600 p-2 text-center ">
 
-<section>
 
 
-</section>
+  <h2 class=' text-5xl font-black relative top-100'>WHY?</h2>
 
-
+<div
+  class="mb-4 rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900"
+  role="alert">
+  A simple dark alert—check it out!
+</div>
 
 <section ref={demo}>
-<aside>
-  <h2 class=' text-5xl font-black relative top-100'>Demo</h2>
-</aside>
 <Project></Project>
-<aside>
-   <h2 class='text-5xl font-black'>Test it</h2>
-</aside>
 </section>
+
+<div
+  class="mb-4 rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 relative -bottom-1/2 left-1/2 "
+  role="alert">
+  A simple dark alert—check it out!
+</div>
+
+<div
+  class="mb-4 rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900"
+  role="alert">
+  A simple dark alert—check it out!
+</div>
+
 
 </main>
 
