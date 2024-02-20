@@ -149,7 +149,7 @@ return(
   </ul>
 </nav>
 
-<div className=' bg-gray-800 m-auto my-5 container text-center place-content-center'>
+<div className=' bg-black m-auto  container text-center place-content-center'>
 
 <div className='flex justify-center '>
 

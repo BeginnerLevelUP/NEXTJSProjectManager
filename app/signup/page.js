@@ -51,24 +51,26 @@ useLayoutEffect(() => {
             trigger: document.documentElement,
             scrub: true,
             start: "top",
-            end: "+=590x",
+            end: "700px",
             markers: true
         }
     });
 
     timeline
-        .from(demo.current, { clipPath: `inset(50%)`, filter: "hue-rotate(180deg)" })
-        .to(demo.current, { clipPath: `inset(0%)`, filter: "hue-rotate(0deg)" },0); 
+        .from(demo.current, {clipPath: `inset(50%)`, filter: "hue-rotate(180deg)", })
+        .to(demo.current, { clipPath: `inset(25%)`, filter: "hue-rotate(0deg)", })
+        .to(demo.current,{clipPath: `inset(0%)`,})
+      
 
 });
 
 
   return (
 <>
-<body  class=" bg-slate-600">
+<body className='overflow-hidden'>
 
 
-<header class=" bg-emerald-950 overflow-hidden" >   
+<header class=" bg-black overflow-hidden" >   
   <div  ref={introDiv}  data-scroll  data-scroll-speed=".5" class="px-6 py-12 text-center md:px-12 lg:py-24 lg:text-left">
     <div class="w-100 mx-auto text-neutral-800 sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
       <div class="grid items-center gap-12 lg:grid-cols-2">
@@ -185,38 +187,41 @@ useLayoutEffect(() => {
     </div>
   </div>
 </header>
-<main class="flex  flex-col transform rotate-0 bg-slate-600 p-2 text-center ">
+
+<main class="flex flex-col transform rotate-0  bg-black p-2 text-center h-max">
 
 
 
   <h2 class=' text-5xl font-black relative top-100'>WHY?</h2>
 
 <div
-  class="mb-4 rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900"
-  role="alert">
+  class=" rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 absolute top-96 z-10"
+  role="alert"
+   data-scroll  data-scroll-speed=".5">
   A simple dark alert—check it out!
 </div>
 
-<section ref={demo}>
+
+<div
+  class="rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 absolute bottom-1/2 z-10 left-1/3 "
+  role="alert"
+   data-scroll  data-scroll-speed=".5">
+  A simple dark alert—check it out!
+</div>
+
+
+<div
+  class=" rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 absolute bottom-96 left-3/4 z-10  "
+  role="alert"
+   data-scroll  data-scroll-speed=".5">
+  A simple dark alert—check it out!
+</div>
+
+<section class='scale-75' ref={demo} >
 <Project></Project>
 </section>
 
-<div
-  class="mb-4 rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 relative -bottom-1/2 left-1/2 "
-  role="alert">
-  A simple dark alert—check it out!
-</div>
-
-<div
-  class="mb-4 rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900"
-  role="alert">
-  A simple dark alert—check it out!
-</div>
-
-
 </main>
-
-
 {/* <!---- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com --> */} 
 {/* <!---- Footer container --> */}
 <footer
@@ -442,7 +447,6 @@ useLayoutEffect(() => {
     >
   </div>
 </footer>
-
 </body>
 </>
 
