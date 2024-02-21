@@ -58,8 +58,7 @@ useLayoutEffect(() => {
 
     timeline
         .from(demo.current, {clipPath: `inset(50%)`, filter: "hue-rotate(180deg)", })
-        .to(demo.current, { clipPath: `inset(25%)`, filter: "hue-rotate(0deg)", })
-        .to(demo.current,{clipPath: `inset(0%)`,})
+        .to(demo.current, { clipPath: `inset(0%)`, filter: "hue-rotate(0deg)", })
       
 
 });
@@ -192,7 +191,7 @@ useLayoutEffect(() => {
 
 
 
-  <h2 class=' text-5xl font-black relative top-100'>WHY?</h2>
+  <h2 class=' text-5xl text-white font-black relative top-100'>WHY?</h2>
 
 <div
   class=" rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 absolute top-96 z-10"
@@ -217,7 +216,7 @@ useLayoutEffect(() => {
   A simple dark alert—check it out!
 </div>
 
-<section class='scale-75' ref={demo} >
+<section class='scale-85' ref={demo} >
 <Project></Project>
 </section>
 
