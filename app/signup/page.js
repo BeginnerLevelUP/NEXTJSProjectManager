@@ -68,79 +68,79 @@ useLayoutEffect(() => {
 <body className='overflow-hidden'>
 
 
-<header class=" bg-black overflow-hidden" >   
-  <div  ref={introDiv}  data-scroll  data-scroll-speed=".5" class="px-6 py-12 text-center md:px-12 lg:py-24 lg:text-left">
-    <div class="w-100 mx-auto text-neutral-800 sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
-      <div class="grid items-center gap-12 lg:grid-cols-2">
-        <div   class="mt-12 lg:mt-0" >
+<header className=" bg-black overflow-hidden" >   
+  <div  ref={introDiv}  data-scroll  data-scroll-speed=".5" className="px-6 py-12 text-center md:px-12 lg:py-24 lg:text-left">
+    <div className="w-100 mx-auto text-neutral-800 sm:max-w-2xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl">
+      <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div   className="mt-12 lg:mt-0" >
           <h1
-            class="mt-0 mb-12 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl text-[hsl(218,81%,95%)]">
-            Manage Your <br /><span class="text-[hsl(218,81%,75%)]">Projects</span>
+            className="mt-0 mb-12 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl text-[hsl(218,81%,95%)]">
+            Manage Your <br /><span className="text-[hsl(218,81%,75%)]">Projects</span>
           </h1>
-          <p class="opacity-70 text-[hsl(218,81%,85%)]">
+          <p className="opacity-70 text-[hsl(218,81%,85%)]">
 
           </p>
         </div>
 
-        <div class="relative mb-12 lg:mb-0">
-          <div id="radius-shape-1" class="absolute rounded-full shadow-lg"></div>
-          <div id="radius-shape-2" class="absolute shadow-lg"></div>
+        <div className="relative mb-12 lg:mb-0">
+          <div id="radius-shape-1" className="absolute rounded-full shadow-lg"></div>
+          <div id="radius-shape-2" className="absolute shadow-lg"></div>
           <div
-            class="relative bg-[hsla(0,0%,100%,0.9)] backdrop-blur-[25px] backdrop-saturate-[200%] block rounded-lg px-6 py-12 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-[hsla(0,0%,15%,0.9)] dark:shadow-black/20 md:px-12">
+            className="relative bg-[hsla(0,0%,100%,0.9)] backdrop-blur-[25px] backdrop-saturate-[200%] block rounded-lg px-6 py-12 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-[hsla(0,0%,15%,0.9)] dark:shadow-black/20 md:px-12">
             <form>
-              <div class="grid md:grid-cols-2 md:gap-6">
-                <div class="relative mb-6" data-te-input-wrapper-init>
+              <div className="grid md:grid-cols-2 md:gap-6">
+                <div className="relative mb-6" data-te-input-wrapper-init>
                   <input type="text"
-                    class="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+                    className="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                     id="exampleFormControlInput1" placeholder="First name" />
-                  <label for="exampleFormControlInput1"
-                    class="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">First
+                  <label htmlFor="exampleFormControlInput1"
+                    className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">First
                     name
                   </label>
                 </div>
-                <div class="relative mb-6" data-te-input-wrapper-init>
+                <div className="relative mb-6" data-te-input-wrapper-init>
                   <input type="text"
-                    class="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+                    className="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                     id="exampleFormControlInput2" placeholder="Last name" />
-                  <label for="exampleFormControlInput2"
-                    class="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">Last
+                  <label htmlFor="exampleFormControlInput2"
+                    className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">Last
                     name
                   </label>
                 </div>
               </div>
-              <div class="relative mb-6" data-te-input-wrapper-init>
+              <div className="relative mb-6" data-te-input-wrapper-init>
                 <input type="email"
-                  class="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+                  className="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                   id="exampleFormControlInput3" placeholder="Email address" />
-                <label for="exampleFormControlInput3"
-                  class="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">Email
+                <label htmlFor="exampleFormControlInput3"
+                  className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">Email
                   address
                 </label>
               </div>
-              <div class="relative mb-6" data-te-input-wrapper-init>
+              <div className="relative mb-6" data-te-input-wrapper-init>
                 <input type="password"
-                  class="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+                  className="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                   id="exampleFormControlInput4" placeholder="Password" />
-                <label for="exampleFormControlInput4"
-                  class="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">Password
+                <label htmlFor="exampleFormControlInput4"
+                  className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">Password
                 </label>
               </div>
 
               <button type="button" data-te-ripple-init data-te-ripple-color="light"
-                class="mb-6 inline-block w-full rounded bg-primary px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
+                className="mb-6 inline-block w-full rounded bg-primary px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
                 Sign up
               </button>
 
-              <div class="text-center">
-                <p class="mb-6 dark:text-neutral-50">
+              <div className="text-center">
+                <p className="mb-6 dark:text-neutral-50">
                   or sign up with:
                 </p>
               </div>
-              <div class="flex justify-center">
+              <div className="flex justify-center">
                 <a href="#!" role="button"
-                  class="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500">
+                  className="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500">
                    {/* <!---- Google --> */}
-                  <span class="[&>svg]:mx-4 [&>svg]:h-4 [&>svg]:w-4">
+                  <span className="[&>svg]:mx-4 [&>svg]:h-4 [&>svg]:w-4">
 <svg width="32" height="32" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
   <title>GitHub dark icon</title>
   <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
@@ -148,9 +148,9 @@ useLayoutEffect(() => {
                   </span>
                 </a>
                 <a href="#!" role="button"
-                  class="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500">
+                  className="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500">
                    {/* <!---- Github --> */}
-                  <span class="[&>svg]:mx-4 [&>svg]:h-4 [&>svg]:w-4">
+                  <span className="[&>svg]:mx-4 [&>svg]:h-4 [&>svg]:w-4">
 <svg width="32" height="32" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
   <title>Google icon</title>
   <path fill="#EA4335 " d="M5.26620003,9.76452941 C6.19878754,6.93863203 8.85444915,4.90909091 12,4.90909091 C13.6909091,4.90909091 15.2181818,5.50909091 16.4181818,6.49090909 L19.9090909,3 C17.7818182,1.14545455 15.0545455,0 12,0 C7.27006974,0 3.1977497,2.69829785 1.23999023,6.65002441 L5.26620003,9.76452941 Z"/>
@@ -161,9 +161,9 @@ useLayoutEffect(() => {
                   </span>
                 </a>
                 <a href="#!" role="button"
-                  class="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500">
+                  className="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500">
                    {/* <!---- Github --> */}
-                  <span class="[&>svg]:mx-4 [&>svg]:h-4 [&>svg]:w-4">
+                  <span className="[&>svg]:mx-4 [&>svg]:h-4 [&>svg]:w-4">
 <svg height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
   <g fill="none">
     <path d="M0 18.338C0 8.216 8.474 0 18.92 0h218.16C247.53 0 256 8.216 256 18.338v219.327C256 247.79 247.53 256 237.08 256H18.92C8.475 256 0 247.791 0 237.668V18.335z" fill="#069"/>
@@ -174,9 +174,9 @@ useLayoutEffect(() => {
                 </a>
               </div>
 
-                <div class="text-center">
-                <p class="mt-10 ml-80 dark:text-neutral-50" href='#'>
-                  Already A Member <span><a href="#" class='text-blue-900 '>Login In</a></span>
+                <div className="text-center">
+                <p className="mt-10 ml-80 dark:text-neutral-50" href='#'>
+                  Already A Member <span><a href="#" className='text-blue-900 '>Login In</a></span>
                 </p>
               </div>
             </form>
@@ -187,14 +187,14 @@ useLayoutEffect(() => {
   </div>
 </header>
 
-<main class="flex flex-col transform rotate-0  bg-black p-2 text-center h-max">
+<main className="flex flex-col transform rotate-0  bg-black p-2 text-center h-max">
 
 
 
-  <h2 class=' text-5xl text-white font-black relative top-100 mb-4' >WHY?</h2>
+  <h2 className=' text-5xl text-white font-black relative top-100 mb-4' >WHY?</h2>
 
 <div
-  class=" rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 absolute top-96 z-10 left-48"
+  className=" rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 absolute top-96 z-10 left-48"
   role="alert"
    data-scroll  data-scroll-speed=".5">
   Track The Progress Of Your Website
@@ -202,7 +202,7 @@ useLayoutEffect(() => {
 
 
 <div
-  class="rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 absolute bottom-1/2 z-10 left-2/4"
+  className="rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 absolute bottom-1/2 z-10 left-2/4"
   role="alert"
    data-scroll  data-scroll-speed=".5">
   Hands On Role In Features 
@@ -210,31 +210,31 @@ useLayoutEffect(() => {
 
 
 <div
-  class=" rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 absolute bottom-96 left-3/4 z-10  "
+  className=" rounded-lg bg-neutral-800 px-6 py-5 text-base text-neutral-50 dark:bg-neutral-900 absolute bottom-96 left-3/4 z-10  "
   role="alert"
    data-scroll  data-scroll-speed=".5">
   No Cookie Cutter Templates
 </div>
 
-<section class='scale-85' ref={demo} >
+<section className='scale-85' ref={demo} >
 <Project></Project>
 </section>
 
 </main>
 
 <footer
-  class="bg-neutral-100 text-center text-neutral-600 dark:bg-neutral-600 dark:text-neutral-200 lg:text-left">
+  className="bg-neutral-100 text-center text-neutral-600 dark:bg-neutral-600 dark:text-neutral-200 lg:text-left">
   <div
-    class="flex items-center justify-center border-b-2 border-neutral-200 p-6 dark:border-neutral-500 lg:justify-between">
-    <div class="mr-12 hidden lg:block">
+    className="flex items-center justify-center border-b-2 border-neutral-200 p-6 dark:border-neutral-500 lg:justify-between">
+    <div className="mr-12 hidden lg:block">
       <span>Check Out The Repo</span>
     </div>
     {/* <!---- Social network icons container --> */}
-    <div class="flex justify-center">
-      <a href="#!" class="text-neutral-600 dark:text-neutral-200">
+    <div className="flex justify-center">
+      <a href="#!" className="text-neutral-600 dark:text-neutral-200">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-4 w-4"
+          className="h-4 w-4"
           fill="currentColor"
           viewBox="0 0 24 24">
           <path
@@ -245,17 +245,17 @@ useLayoutEffect(() => {
   </div>
 
   {/* <!---- Main container div: holds the entire content of the footer, including four sections (TW elements, Products, Useful links, and Contact), with responsive styling and appropriate padding/margins. --> */}
-  <div class="mx-6 py-10 text-center md:text-left">
-    <div class="grid-1 grid gap-8 md:grid-cols-2 lg:grid-cols-2">
+  <div className="mx-6 py-10 text-center md:text-left">
+    <div className="grid-1 grid gap-8 md:grid-cols-2 lg:grid-cols-2">
       {/* <!---- TW elements section --> */}
-      <div class="">
+      <div className="">
         <h6
-          class="mb-4 flex items-center justify-center font-semibold uppercase md:justify-start">
+          className="mb-4 flex items-center justify-center font-semibold uppercase md:justify-start">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            class="mr-3 h-4 w-4">
+            className="mr-3 h-4 w-4">
             <path
               d="M12.378 1.602a.75.75 0 00-.756 0L3 6.632l9 5.25 9-5.25-8.622-5.03zM21.75 7.93l-9 5.25v9l8.628-5.032a.75.75 0 00.372-.648V7.93zM11.25 22.18v-9l-9-5.25v8.57a.75.75 0 00.372.648l8.628 5.033z" />
           </svg>
@@ -271,13 +271,13 @@ useLayoutEffect(() => {
       {/* <!---- Contact section --> */}
       <div>
         <h6
-          class="mb-4 flex justify-center font-semibold uppercase md:justify-start">
+          className="mb-4 flex justify-center font-semibold uppercase md:justify-start">
           Contact
         </h6>
-        <p class="mb-4 flex items-center justify-center md:justify-start">
+        <p className="mb-4 flex items-center justify-center md:justify-start">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="mr-3 h-5 w-5"
+          className="mr-3 h-5 w-5"
           fill="currentColor"
           viewBox="0 0 24 24">
           <path
@@ -285,10 +285,10 @@ useLayoutEffect(() => {
         </svg>
           info@example.com
         </p>
-        <p class="mb-4 flex items-center justify-center md:justify-start">
+        <p className="mb-4 flex items-center justify-center md:justify-start">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="mr-3 h-5 w-5"
+          className="mr-3 h-5 w-5"
           fill="currentColor"
           viewBox="0 0 24 24">
           <path
@@ -297,12 +297,12 @@ useLayoutEffect(() => {
           info@example.com
         </p>
 
-        <p class="mb-4 flex items-center justify-center md:justify-start">
+        <p className="mb-4 flex items-center justify-center md:justify-start">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            class="mr-3 h-5 w-5">
+            className="mr-3 h-5 w-5">
             <path
               d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
             <path
@@ -311,16 +311,16 @@ useLayoutEffect(() => {
           info@example.com
         </p>
 
-        <p class="mb-4 flex items-center justify-center md:justify-start">
+        <p className="mb-4 flex items-center justify-center md:justify-start">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            class="mr-3 h-5 w-5">
+            className="mr-3 h-5 w-5">
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z"
-              clip-rule="evenodd" />
+              clipRule="evenodd" />
           </svg>
           + 01 234 567 88
         </p>
@@ -330,10 +330,10 @@ useLayoutEffect(() => {
   </div>
 
   {/* <!----Copyright section-->  --> */}
-  <div class="bg-neutral-200 p-6 text-center dark:bg-neutral-700">
+  <div className="bg-neutral-200 p-6 text-center dark:bg-neutral-700">
     <span>© 2023 Copyright:</span>
     <a
-      class="font-semibold text-neutral-600 dark:text-neutral-400"
+      className="font-semibold text-neutral-600 dark:text-neutral-400"
       href="https://tw-elements.com/"
       >TW elements</a
     >
