@@ -1,13 +1,11 @@
-
-
-
+import Project from "./components/project";
 export default function Home() {
 
 
 
   return (
 <>
-<h1>Home Page</h1>
+<Project></Project>
 </>
   );
 }
