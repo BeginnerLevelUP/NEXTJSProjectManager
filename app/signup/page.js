@@ -216,7 +216,7 @@ useLayoutEffect(() => {
   No Cookie Cutter Templates
 </div>
 
-<section className='scale-85' ref={demo} >
+<section className=' m-auto container' ref={demo} >
 <Project></Project>
 </section>
 
