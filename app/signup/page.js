@@ -4,7 +4,7 @@ import React, { useState,useEffect,useLayoutEffect,useRef } from 'react';
 import Project from '../components/project';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import {signIn,signOut,useSession,getProviders} from "next-auth/react"
+import {signIn,signOut,useSession,getProviders,authorize} from "next-auth/react"
 import { useDispatch,useSelector } from "react-redux"
 import { setUser,clearUser} from "@/redux/features/user-slice"
 function LoginForm() {
@@ -193,6 +193,7 @@ useEffect(() => {
                 {
                            providers &&
 Object.values(providers).map((provider) => {
+  console.log(providers)
   switch (provider.name) {
     case 'Google':
       return (
@@ -247,6 +248,20 @@ Object.values(providers).map((provider) => {
 </svg>
                   </span>
                 </a>
+      )
+    case 'Credentials':
+      return(
+        <h1
+        onClick={()=>{ signIn('credentials',
+      {
+        username:"bspdfnksldc@gmail.com",
+        password:"asdpfj-023",
+        // // The page where you want to redirect to after a 
+        // // successful login
+        callbackUrl: `${window.location.origin}`,
+        redirect: false,
+      }
+    )}}>Regular SignIn</h1>
       )
     default:
       return (
