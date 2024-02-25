@@ -4,8 +4,6 @@ import GitHubProvider from "next-auth/providers/github";
 import LinkedInProvider from "next-auth/providers/linkedin";
 import { establishConnection } from "@/utils/database";
 import User from "@/models/user";
-import Project from "@/models/project";
-import Task from "@/models/task";
 const handler = NextAuth({
   providers: [
     GoogleProvider({

@@ -1,6 +1,5 @@
 
 "use client"
-import { redirect } from 'next/navigation'
 import React, { useState,useEffect,useLayoutEffect,useRef } from 'react';
 import Project from '../components/project';
 import gsap from 'gsap';
