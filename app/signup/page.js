@@ -1,5 +1,6 @@
 
 "use client"
+import Link from 'next/link'
 import React, { useState,useEffect,useLayoutEffect,useRef } from 'react';
 import Project from '../components/project';
 import gsap from 'gsap';
@@ -128,6 +129,7 @@ useEffect(() => {
           <div
             className="relative bg-[hsla(0,0%,100%,0.9)] backdrop-blur-[25px] backdrop-saturate-[200%] block rounded-lg px-6 py-12 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-[hsla(0,0%,15%,0.9)] dark:shadow-black/20 md:px-12">
       {session && session.user ? (
+        <>
       <button type="button" data-te-ripple-init data-te-ripple-color="light"
         className="mb-6 inline-block w-full rounded bg-primary px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
         onClick={() =>
@@ -138,6 +140,8 @@ useEffect(() => {
         >
           Sign out
           </button>
+          <Link href='/'>Home Page</Link>
+          </>
       ) : (
 
             <form>
@@ -193,7 +197,6 @@ useEffect(() => {
                 {
                            providers &&
 Object.values(providers).map((provider) => {
-  console.log(providers)
   switch (provider.name) {
     case 'Google':
       return (
@@ -250,16 +253,14 @@ Object.values(providers).map((provider) => {
                 </a>
       )
     case 'Credentials':
+      const username='asfinsa'
+      const password="1=2-03i9fwjesdmok"
       return(
         <h1
         onClick={()=>{ signIn('credentials',
       {
-        username:"bspdfnksldc@gmail.com",
-        password:"asdpfj-023",
-        // // The page where you want to redirect to after a 
-        // // successful login
-        callbackUrl: `${window.location.origin}`,
-        redirect: false,
+        username,
+        password
       }
     )}}>Regular SignIn</h1>
       )

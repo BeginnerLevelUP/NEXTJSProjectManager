@@ -16,12 +16,12 @@ const handler = NextAuth({
     // e.g. domain, username, password, 2FA token, etc.
     // You can pass any HTML attribute to the <input> tag through the object.
     credentials: {
-      username: { label: "Username", type: "text", placeholder: "jsmithvvc" },
+      username: { label: "Username", type: "text"},
       password: { label: "Password", type: "password" }
     },
     async authorize(credentials, req) {
       // Add logic here to look up the user from the credentials supplied
-      const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
+      const user = { username: credentials?.username, password:credentials?.password }
 
       if (user) {
         // Any object returned will be saved in `user` property of the JWT
@@ -49,35 +49,35 @@ const handler = NextAuth({
   ],
   callbacks:{
 session: async ({ session }) => {
-  try {
-    await establishConnection()
-    const currentUser = await User.findOne({ email: session.user.email })
-      .populate({
-        path: 'projects',
-        populate: {
-          path: 'tasks',
-          populate: {
-            path: 'assignedTo' 
-          }
-        }
-      });
+  // try {
+  //   await establishConnection()
+  //   const currentUser = await User.findOne({ email: session.user.email })
+  //     .populate({
+  //       path: 'projects',
+  //       populate: {
+  //         path: 'tasks',
+  //         populate: {
+  //           path: 'assignedTo' 
+  //         }
+  //       }
+  //     });
     
-    if (currentUser) {
-      session.user.id = currentUser._id.toString();
-      const updatedProjects = [];
-      currentUser.projects.forEach((project) => {
-        const { tasks, comments, ...projectWithoutTasksAndComments } = project.toObject();
-        session.tasks = tasks; // Assigning tasks to session.tasks
-        session.comments = comments; // Assigning comments to session.comments
-        updatedProjects.push(projectWithoutTasksAndComments); // Adding project without tasks and comments to updatedProjects array
-      });
-      session.projects = updatedProjects; // Assigning updatedProjects array back to session.projects
-    }
+  //   if (currentUser) {
+  //     session.user.id = currentUser._id.toString();
+  //     const updatedProjects = [];
+  //     currentUser.projects.forEach((project) => {
+  //       const { tasks, comments, ...projectWithoutTasksAndComments } = project.toObject();
+  //       session.tasks = tasks; // Assigning tasks to session.tasks
+  //       session.comments = comments; // Assigning comments to session.comments
+  //       updatedProjects.push(projectWithoutTasksAndComments); // Adding project without tasks and comments to updatedProjects array
+  //     });
+  //     session.projects = updatedProjects; // Assigning updatedProjects array back to session.projects
+  //   }
 
  
-  } catch (error) {
-    console.error("Error fetching user projects:", error);
-  }
+  // } catch (error) {
+  //   console.error("Error fetching user projects:", error);
+  // }
   return session;
 }
 
