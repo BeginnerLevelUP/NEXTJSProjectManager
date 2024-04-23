@@ -65,10 +65,10 @@ export const {
   updateProject,
 } = projectSlice.actions;
 
-const rootReducer = combineReducers({
+const combinedProjectSlice = combineReducers({
   projects: projectSlice.reducer,
   tasks: taskReducer,
   comments: commentReducer,
 });
 
-export default rootReducer;
+export default combinedProjectSlice;

@@ -1,14 +1,17 @@
 
 "use client"
 import Link from 'next/link'
-import React, { useState,useEffect,useLayoutEffect,useRef } from 'react';
+import { Dialog, Transition } from '@headlessui/react'
+import React, { useState,useEffect,useLayoutEffect,useRef,Fragment } from 'react';
 import Project from '../components/project';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {signIn,signOut,useSession,getProviders,authorize} from "next-auth/react"
 import { useDispatch,useSelector } from "react-redux"
 import { setUser,clearUser} from "@/redux/features/user-slice"
+import { useRouter } from 'next/navigation'
 function LoginForm() {
+   const router = useRouter()
   const introDiv=useRef(null)
   const demo=useRef(null)
   const [email, setEmail] = useState('');
@@ -54,7 +57,7 @@ useLayoutEffect(() => {
             trigger: document.documentElement,
             scrub: true,
             start: "top",
-            end: "700px",
+            end: "200px",
         }
     });
 
@@ -84,6 +87,7 @@ const dispatch=useDispatch()
 useEffect(() => {
   if (session) {
     console.log(session)
+    router.push('/')
     const user = session.user;
     const projects = session.projects||[];
     const tasks=session.tasks||[]
@@ -102,6 +106,16 @@ useEffect(() => {
 
   }
 }, [session]);
+
+  let [isOpen, setIsOpen] = useState(false)
+
+  function closeModal() {
+    setIsOpen(!isOpen)
+  }
+
+  function openModal() {
+    setIsOpen(!isOpen)
+  }
 
 
   return (
@@ -222,8 +236,9 @@ Object.values(providers).map((provider) => {
 
            <a href="#!" role="button"
                   className="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500"
-                  onClick={() => 
+                  onClick={() => {
                signIn(provider.id)
+                  }
               }>
                    {/* <!---- Google --> */}
                   <span className="[&>svg]:mx-4 [&>svg]:h-4 [&>svg]:w-4">
@@ -252,18 +267,6 @@ Object.values(providers).map((provider) => {
                   </span>
                 </a>
       )
-    case 'Credentials':
-      const username='asfinsa'
-      const password="1=2-03i9fwjesdmok"
-      return(
-        <h1
-        onClick={()=>{ signIn('credentials',
-      {
-        username,
-        password
-      }
-    )}}>Regular SignIn</h1>
-      )
     default:
       return (
         <h1>No Providers At This Time</h1>
@@ -275,14 +278,94 @@ Object.values(providers).map((provider) => {
 
                 <div className="text-center">
                 <p className="mt-10 ml-80 dark:text-neutral-50" href='#'>
-                  Already A Member <span><a href="#" className='text-blue-900 '>Login In</a></span>
+                  Already A Member <span>
+        <a
+          type="button"
+          onClick={openModal}
+          className="rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+        >
+         LOGIN IN
+        </a>
+                    </span>
                 </p>
+
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    LOGIN
+                  </Dialog.Title>
+                  <div className="grid md:grid-cols-2 md:gap-6 my-6">
+                                <div className="relative mb-6" data-te-input-wrapper-init>
+                <input type="email"
+                  className="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+                  id="exampleFormControlInput3" placeholder="Email address" />
+                <label htmlFor="exampleFormControlInput3"
+                  className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">Email
+                  address
+                </label>
+              </div>
+              <div className="relative mb-6" data-te-input-wrapper-init>
+                <input type="password"
+                  className="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+                  id="exampleFormControlInput4" placeholder="Password" />
+                <label htmlFor="exampleFormControlInput4"
+                  className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">Password
+                </label>
+              </div>
+
+              <button type="button" data-te-ripple-init data-te-ripple-color="light"
+                className=" mx-24 mb-6 inline-block w-full rounded bg-primary px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] ">
+                Login
+              </button>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={closeModal}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
               </div>
             </form>  
-      )}
-
-            
-          </div>
+      )}   
+        </div>
         </div>
       </div>
     </div>
