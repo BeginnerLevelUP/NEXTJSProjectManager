@@ -86,8 +86,6 @@ const dispatch=useDispatch()
 
 useEffect(() => {
   if (session) {
-    console.log(session)
-    router.push('/')
     const user = session.user;
     const projects = session.projects||[];
     const tasks=session.tasks||[]
