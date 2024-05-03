@@ -23,7 +23,15 @@ return await User.find({}).populate({
     },
     user: async (_, { id }) => {
       try {
-        return await User.findById(id);
+        return await User.findOne({email:id}).populate({
+  path: 'projects',
+  populate: {
+    path: 'tasks',
+    populate: {
+      path: 'assignedTo' 
+    }
+  }
+});
       } catch (error) {
         throw new Error("Failed to fetch user");
       }
@@ -114,7 +122,11 @@ return await User.find({}).populate({
     createProject: async (_, { userId, name, description, completed, gitRepoUrl, deployedSite }) => {
   try {
     // Check if the user exists
-    const user = await User.findById(userId);
+const user = await User.findOne({
+  $or: [
+    { email: userId } 
+  ]
+});
     if (!user) {
       throw new Error("User not found");
     }
@@ -130,7 +142,7 @@ return await User.find({}).populate({
 
     // Update the user's projects array
     const updatedUser = await User.findByIdAndUpdate(
-      userId,
+      user._id,
       { $addToSet: { projects: newProject._id } },
       { new: true }
     ).populate('projects');

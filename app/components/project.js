@@ -454,7 +454,7 @@ return (
       {renderNav()}
     </div>
 
-    <div className='bg-black m-auto h-full w-full text-center'>
+    <div className=' m-auto h-full w-full text-center'>
 
       <div className='flex justify-center '>
         <button
