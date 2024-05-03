@@ -11,7 +11,14 @@ import { useDispatch,useSelector } from "react-redux"
 import { setUser,clearUser} from "@/redux/features/user-slice"
 import { useRouter } from 'next/navigation'
 function LoginForm() {
-   const router = useRouter()
+  const dispatch=useDispatch()
+ const projects = useSelector(({projects}) => projects.projects);
+  const comments= useSelector(({projects}) => projects.comments)
+  const tasks= useSelector(({projects}) => projects.tasks)
+  const {data:session}=useSession()
+  const [providers,setProviders]=useState(null)
+
+  const router = useRouter()
   const introDiv=useRef(null)
   const demo=useRef(null)
   const [email, setEmail] = useState('');
@@ -28,6 +35,91 @@ function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add your form submission logic here
+  };
+
+  const fetchUser = async (email) => {
+    const userQuery = `query User($userId: ID!) {
+      user(id: $userId) {
+        _id
+        username
+        email
+        password
+        projects {
+          _id
+          dateCreated
+          dateUpdated
+          name
+          description
+          completed
+          gitRepoUrl
+          deployedSite
+          comments {
+            _id
+            text
+            user {
+              _id
+              username
+              email
+              password
+            }
+            createdAt
+            replies {
+              _id
+              text
+              createdAt
+            }
+          }
+          tasks {
+            _id
+            name
+            description
+            status
+            dueDate
+            assignedTo {
+              _id
+              username
+              email
+              password
+            }
+            ranking
+            createdAt
+          }
+          members {
+            _id
+            username
+            email
+            password
+          }
+        }
+      }
+    }`;
+
+    try {
+      const res = await fetch("http://localhost:3000/api/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: userQuery,
+          variables: {
+            userId: email,
+          },
+        }),
+      });
+
+      const { data, errors } = await res.json();
+
+      if (errors) {
+        console.error("Error Fetching User Projects:", errors);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error Fetching User Projects:", error.message);
+      return null;
+    }
   };
 
   useEffect(() => {
@@ -68,12 +160,7 @@ useLayoutEffect(() => {
 
 });
 
-const dispatch=useDispatch()
- const projects = useSelector(({projects}) => projects.projects);
-  const comments= useSelector(({projects}) => projects.comments)
-  const tasks= useSelector(({projects}) => projects.tasks)
-  const {data:session}=useSession()
-  const [providers,setProviders]=useState(null)
+
   useEffect(
     ()=>{
       const callProviders=async()=>{
@@ -85,25 +172,35 @@ const dispatch=useDispatch()
   )
 
 useEffect(() => {
-  if (session) {
-    const user = session.user;
-    const projects = session.projects||[];
-    const tasks=session.tasks||[]
-    const comments=session.comments||[]
-    dispatch(setUser(user))
+  const fetchData = async () => {
+    if (session) {
+      try {
+        const userData = await fetchUser(session.user.email);
+        const user = userData.user;
+        const projects = userData.user.projects || [];
+        const tasks = userData.user.tasks || [];
+        const comments = userData.user.comments || [];
+        
+        dispatch(setUser(user));
 
-    projects.forEach(project => {
-        dispatch(addProject(project));  
-    });
-    tasks.forEach(task => {
-        dispatch(addTask(task));  
-    });
-    comments.forEach(comment => {
-        dispatch(addComment(comment));  
-    });
+        projects.forEach((project) => {
+          dispatch(addProject(project));  
+        });
+        tasks.forEach((task) => {
+          dispatch(addTask(task));  
+        });
+        comments.forEach((comment) => {
+          dispatch(addComment(comment));  
+        });
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
+  };
 
-  }
+  fetchData();
 }, [session]);
+
 
   let [isOpen, setIsOpen] = useState(false)
 
