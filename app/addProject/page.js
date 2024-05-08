@@ -1,10 +1,10 @@
 'use client'
+import Nav from "../components/nav";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 export default function  AddProjects() {
    const {data:session}=useSession()
-   const user = session.user;
-   console.log(user)
+   const user = session?.user;
   const [projectName,setProjectName]=useState('')
   const [projectDescription,setProjectDescription]=useState('')
 
@@ -38,12 +38,12 @@ export default function  AddProjects() {
     }
   })
         }
-			);    const { data, errors } = await res.json();
+			);    
+      const { data, errors } = await res.json();
 
     if (errors) {
       console.error('Error Creating Project:', errors);
 		} 
-    console.log(data)
   }catch (err) {
 		console.log(err instanceof Error ? err.message : 'unknow error')
 		}
@@ -67,6 +67,7 @@ export default function  AddProjects() {
 
 	return (
 <>
+<Nav></Nav>
    <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="projectName">Project Name:</label>

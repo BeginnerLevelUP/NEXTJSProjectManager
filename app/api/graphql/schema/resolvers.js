@@ -15,7 +15,7 @@ return await User.find({}).populate({
       path: 'assignedTo' 
     }
   }
-});
+}).populate('associates');
 
   } catch (error) {
     throw new Error("Failed to fetch users");
@@ -31,7 +31,7 @@ return await User.find({}).populate({
       path: 'assignedTo' 
     }
   }
-});
+}).populate('associates');
       } catch (error) {
         throw new Error("Failed to fetch user");
       }
@@ -95,6 +95,7 @@ return await User.find({}).populate({
         });
         return newUser;
       } catch (error) {
+        console.log(error)
         throw new Error("Could not create user");
       }
     },
@@ -116,6 +117,65 @@ return await User.find({}).populate({
         return deletedUser;
       } catch (error) {
         throw new Error("Could not delete user");
+      }
+    },
+addAssociate: async (_, { email, associateName }) => {
+  try {
+    // Validate inputs
+    if (!email || !associateName) {
+      throw new Error('Invalid input');
+    }
+
+    // Find the user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Find the associate by username
+    const associate = await User.findOne({ username: associateName });
+    if (!associate) {
+      throw new Error('Associate not found');
+    }
+
+    // Add associateId only if it's not already present
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      { $addToSet: { associates: associate._id } },
+      { new: true } // Return the updated document
+    );
+
+    return updatedUser; // Return the updated user
+  } catch (error) {
+    console.error('Error adding associate:', error);
+    throw new Error('Unable to add associate');
+  }
+},
+    removeAssociate: async (_, { _id, associateId }) => {
+      try {
+        // Find the user by _id
+        const user = await User.findById(_id);
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        // Check if associateId is valid
+        const associateIndex = user.associates.indexOf(associateId);
+        if (associateIndex === -1) {
+          throw new Error('Associate not found in user\'s associates');
+        }
+
+        // Remove the associateId from the associates array
+        user.associates.splice(associateIndex, 1);
+        await user.save();
+
+        // Fetch the updated user
+        const updatedUser = await User.findById(_id);
+
+        return updatedUser; // Return the updated user
+      } catch (e) {
+        console.log(e instanceof Error ? e.message : 'unknown error');
+        throw new Error('Unable to remove Associate');
       }
     },
     //Project Mutations

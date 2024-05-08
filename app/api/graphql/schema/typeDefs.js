@@ -6,6 +6,7 @@ const typeDefs = gql`
     username: String
     email: String
     password: String
+    associates:[User]
     projects: [Project]
   }
 
@@ -70,7 +71,8 @@ task(id: ID!): Task
     createUser(username: String!, email: String!, password: String!): User
     updateUser(id: ID!, username: String, email: String, password: String): User
     deleteUser(id: ID!): User
-
+    addAssociate(email:String!,associateName:String!): User!
+    removeAssociate(_id: ID!, associateId: ID!): User!
     createProject( 
     name: String!
     description: String!

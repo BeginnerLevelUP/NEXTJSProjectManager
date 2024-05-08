@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Dialog, Transition } from '@headlessui/react'
 import React, { useState,useEffect,useLayoutEffect,useRef,Fragment } from 'react';
-import Project from '../components/project';
+
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {signIn,signOut,useSession,getProviders,authorize} from "next-auth/react"
@@ -497,7 +497,7 @@ Object.values(providers).map((provider) => {
 </div>
 
 <section className=' m-auto container' ref={demo} >
-<Project></Project>
+
 </section>
 
 </main>

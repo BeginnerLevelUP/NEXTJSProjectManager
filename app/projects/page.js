@@ -1,8 +1,13 @@
+"use client"
+import Nav from "../components/nav";
 import { useSession } from "next-auth/react";
 import { useEffect,useState } from "react";
-export default function Projects() {
+import { useRouter } from 'next/navigation'
+import DotLoader from "react-spinners/DotLoader";
+const page = () => {
+  const router = useRouter()
   const { data: session } = useSession();
-  const user = session.user;
+  const user = session?.user;
   const [userData, setUserData] = useState();
 
   const fetchUserProjects = async () => {
@@ -71,7 +76,7 @@ export default function Projects() {
         body: JSON.stringify({
           query: userQuery,
           variables: {
-            userId: user.email,
+            userId: user?.email,
           },
         }),
       });
@@ -99,11 +104,12 @@ export default function Projects() {
     };
 
     fetchData();
-  }, [user.email]);
+  }, [user?.email]);
 
-  console.log(userData);
 
   return (
+    <>
+    <Nav></Nav>
   <section>
       {/* Container */}
       <div className="mx-auto w-full max-w-5xl px-5 py-16 md:px-10 md:py-24 lg:py-32">
@@ -113,7 +119,7 @@ export default function Projects() {
           <h2 className="mb-5 text-center text-3xl font-bold md:text-5xl">Short heading goes here</h2>
           <p className="mb-20 text-center text-sm sm:text-base">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
           {/* Content */}
-          <div className="gap-x-8 [column-count:1] md:grid-cols-2 md:gap-x-4 md:[column-count:2]">
+          <div className="gap-x-8 [column-count:1] md:grid-cols-2 md:gap-x-4 md:[column-count:2] flex">
             {/* Render projects if userData exists, otherwise render loading or message */}
             {userData ? (
               userData.user.projects.map((project) => (
@@ -141,7 +147,7 @@ export default function Projects() {
                 <p>VISIT WEBSITE</p>
                 <img src="https://assets.website-files.com/6458c625291a94a195e6cf3a/64b636d7c440a74b4076b278_button-link.svg" alt="" className="inline-block" />
               </a>
-              <a href="#" className="inline-block rounded-md bg-black px-6 py-3 text-center font-semibold text-white">View Project</a>
+              <a className="inline-block rounded-md bg-black px-6 py-3 text-center font-semibold text-white" onClick={()=>{router.push(`project/${project._id}`)}}>View Project</a>
             </div>
           </div>
         </div>
@@ -149,12 +155,17 @@ export default function Projects() {
               ))
             ) : (
               // Render loading state or message
-              <p>Loading...</p>
+
+     <DotLoader 
+     color="black"
+     size={100} />
             )}
           </div>
         </div>
       </div>
     </section>
+  </>
   )
 }
 
+export default page

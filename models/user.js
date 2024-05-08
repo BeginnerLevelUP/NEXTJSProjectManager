@@ -16,6 +16,10 @@ const userSchema = new Schema({
         type: String,
         minlength: [8, 'Password must be at least 8 characters long']
     },
+    associates:[{
+        type:Schema.Types.ObjectId,
+        ref:"User"
+    }],
     projects: [{
         type: Schema.Types.ObjectId,
         ref: "Project"
