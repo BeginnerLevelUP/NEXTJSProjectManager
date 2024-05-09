@@ -15,8 +15,11 @@ import DotLoader from "react-spinners/DotLoader";
 import { useSession } from "next-auth/react";
 
 const projectPage = ({ params }) => {
+  const [taskName,setProjectName]=useState('')
+  const [taskDescription,setProjectDescription]=useState('')
   const [date, setDate] = useState()
-  let [isOpen, setIsOpen] = useState(false)
+  let [isOpen, setIsOpen] = useState({open:false,edit:false})
+  const [currentTaskId,setTask]=useState()
   const { data: session } = useSession();
   const user = session?.user;
   const [userData, setUserData] = useState();
@@ -39,7 +42,13 @@ const [selectedLabel, setSelectedLabel] = useState(null);
             .replace(/\s+/g, "")
             .includes(query.toLowerCase().replace(/\s+/g, ""))
         );
+  const handleTaskNameChange=(e)=>{
+    setProjectName(e.target.value)
+  }
 
+  const handleTaskDescriptionChange=(e)=>{
+    setProjectDescription(e.target.value)
+  }
 
   const fetchUserAssociates = async () => {
     const userQuery = `
@@ -442,19 +451,18 @@ useEffect(() => {
 
 
         
-  function closeModal() {
-    setIsOpen(!isOpen)
+  function handleTaskModal(edit,task) {
+    setIsOpen({open:!isOpen.open,edit:edit})
+    setTask(task)
   }
-  function openModal() {
-    setIsOpen(!isOpen)
-  }
+
   return (
   currentProject?(
 <>
 <Nav></Nav>
 <div className="text-center">
-  <Transition appear show={isOpen} as={Fragment}>
-    <Dialog as="div" className="fixed inset-0 z-10" onClose={closeModal}>
+  <Transition appear show={isOpen.open} as={Fragment}>
+    <Dialog as="div" className="fixed inset-0 z-10" onClose={()=>{handleTaskModal(false,'')}}>
       <Transition.Child
         as={Fragment}
         enter="ease-out duration-300"
@@ -482,7 +490,7 @@ useEffect(() => {
               as="h3"
               className="text-lg font-medium leading-6 text-gray-900"
             >
-              Create New Task
+              {isOpen.edit ? "Edit Task" : "Create New Task"}
             </Dialog.Title>
             <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 my-6">
 
@@ -493,6 +501,8 @@ useEffect(() => {
                   className="peer block w-full min-h-[auto] rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                   id="exampleFormControlInput3"
                   placeholder="Task Name"
+                                        value={taskName}
+            onChange={handleTaskNameChange}
                 />
                 <label
                   htmlFor="exampleFormControlInput3"
@@ -509,6 +519,8 @@ useEffect(() => {
                   className="peer block w-full min-h-[auto] rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                   id="exampleFormControlInput4"
                   placeholder="Task Description"
+                value={taskDescription}
+            onChange={handleTaskDescriptionChange}
                 />
                 <label
                   htmlFor="exampleFormControlInput4"
@@ -691,17 +703,22 @@ useEffect(() => {
               </div>
             </div>
             <button 
-            onClick={()=>{createTask(currentProject._id,'one','try',date||null,selected?._id||null,selectedLabel.label||null)}}
+            onClick={
+              isOpen.edit ?
+                ()=>{updateTask({taskId:currentTaskId,date:date||null,assignedTo:selected?._id||null,ranking:selectedLabel?.label||null,name:taskName,description:taskDescription})}
+              :
+             ()=>{createTask(currentProject._id,taskName,taskDescription,date||null,selected?._id||null,selectedLabel?.label||null)}
+            }
               type="button"
               className="w-full rounded bg-primary px-6 py-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
             >
-              Create
+             {isOpen.edit ? "Edit" : "Create"}
             </button>
             <div className="mt-4">
               <button
                 type="button"
                 className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                onClick={closeModal}
+                onClick={()=>{()=>{handleTaskModal(false,'')}}}
               >
                 Cancel
               </button>
@@ -795,7 +812,7 @@ useEffect(() => {
                   <div className="space-x-5 flex">
                     <h2 className="text-2xl font-bold mb-4 my-auto">Your tasks today</h2>
 
-<svg onClick={openModal} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+<svg onClick={()=>{handleTaskModal(false)}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
 </svg>
                   </div>
@@ -841,7 +858,7 @@ useEffect(() => {
       <Menu.Items className={'className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"'}>
         <Menu.Item>
           {({ active }) => (
-            <a
+            <a onClick={()=>{handleTaskModal(true,task._id)}}
              className={`flex w-full items-center rounded-md px-2 py-2 text-sm`} 
             >
  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
