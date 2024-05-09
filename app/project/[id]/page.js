@@ -8,9 +8,8 @@ import {
 import Nav from "@/app/components/nav";
 import { format } from "date-fns";
 import { DayPicker } from "react-day-picker";
-import { useState,useEffect } from "react"
-import { Fragment } from "react";
-import { Combobox, Transition,Dialog,Listbox} from "@headlessui/react";
+import { Fragment, useEffect, useRef, useState } from 'react'
+import { Combobox, Transition,Dialog,Listbox,Menu} from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import DotLoader from "react-spinners/DotLoader";
 import { useSession } from "next-auth/react";
@@ -27,9 +26,9 @@ const projectPage = ({ params }) => {
 const [selectedLabel, setSelectedLabel] = useState(null);
   const [query, setQuery] = useState("");
   const labelOptions = [
-    { label: 'Regular', property: 'regular', color: 'bg-green-500' },
-    { label: 'Important', property: 'important', color: 'bg-blue-500' },
-    { label: 'Detrimental', property: 'detrimental', color: 'bg-red-500' }
+    { label: 'Regular', property: 'regular', color: 'bg-green-500',svg:'green' },
+    { label: 'Important', property: 'important', color: 'bg-blue-500' ,svg:'blue' },
+    { label: 'Detrimental', property: 'detrimental', color: 'bg-red-500', svg:'red' }
   ];
   const filteredPeople =
     query === ""
@@ -240,6 +239,190 @@ query User($userId: ID!) {
 		}
   }
 
+  const deleteTask=async(deleteTaskId)=>{
+    const taskMutation=`mutation Mutation($deleteTaskId: ID!) {
+  deleteTask(id: $deleteTaskId) {
+    _id
+    name
+    description
+    status
+    dueDate
+    assignedTo {
+      _id
+      username
+      email
+      password
+      associates {
+        _id
+        username
+        email
+        password
+      }
+      projects {
+        _id
+        dateCreated
+        dateUpdated
+        name
+        description
+        completed
+        gitRepoUrl
+        deployedSite
+        comments {
+          _id
+          text
+          user {
+            _id
+            username
+            email
+            password
+          }
+          createdAt
+          replies {
+            _id
+            text
+            createdAt
+          }
+        }
+        tasks {
+          _id
+          name
+          description
+          status
+          dueDate
+          ranking
+          createdAt
+        }
+        members {
+          _id
+          username
+          email
+          password
+        }
+      }
+    }
+    ranking
+    createdAt
+  }
+}`   
+    try {
+      const res = await fetch("http://localhost:3000/api/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: taskMutation,
+          variables: {
+            deleteTaskId
+          },
+        }),
+      });
+
+      const { data, errors } = await res.json();
+
+      if (errors) {
+        console.error("Error Fetching User Projects:", errors);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error Fetching User Projects:", error.message);
+      return null;
+    }
+
+  }
+
+  const updateTask=async(update)=>{
+    const updateQuery=`mutation UpdateTask($taskId: ID!, $ranking: String, $assignedTo: [ID!], $dueDate: String, $description: String, $status: String, $name: String) {
+  updateTask(taskId: $taskId, ranking: $ranking, assignedTo: $assignedTo, dueDate: $dueDate, description: $description, status: $status, name: $name) {
+    _id
+    name
+    description
+    status
+    dueDate
+    assignedTo {
+      _id
+      username
+      email
+      password
+      associates {
+        _id
+        username
+        email
+        password
+      }
+      projects {
+        _id
+        dateCreated
+        dateUpdated
+        name
+        description
+        completed
+        gitRepoUrl
+        deployedSite
+        comments {
+          _id
+          text
+          user {
+            _id
+            username
+            email
+            password
+          }
+          createdAt
+          replies {
+            _id
+            text
+            createdAt
+          }
+        }
+        tasks {
+          _id
+          name
+          description
+          status
+          dueDate
+          ranking
+          createdAt
+        }
+        members {
+          _id
+          username
+          email
+          password
+        }
+      }
+    }
+    ranking
+    createdAt
+  }
+}`
+        try {
+      const res = await fetch("http://localhost:3000/api/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: updateQuery,
+          variables:update
+        }),
+      });
+
+      const { data, errors } = await res.json();
+
+      if (errors) {
+        console.error("Error Fetching User Projects:", errors);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error Fetching User Projects:", error.message);
+      return null;
+    }
+  }
 useEffect(() => {
   const fetchData = async () => {
     const data = await fetchUserAssociates();
@@ -540,8 +723,8 @@ useEffect(() => {
                   <div className="flex flex-nowrap -space-x-3">
 
 {
-  currentProject?.memembers?.length>0? (
-  currentProject.memembers.map(ass => (
+  currentProject?.members?.length>0? (
+  currentProject.members.map(ass => (
       <div key={ass._id} className="h-9 w-9">
         <img className="object-cover w-full h-full rounded-full" src="https://ui-avatars.com/api/?background=random" alt="avatar1" />
       </div>
@@ -556,6 +739,12 @@ useEffect(() => {
                   </div>
                 </div>
                 <div className="flex items-center gap-x-2">
+                  <button type="button" className="inline-flex items-center justify-center h-9 px-3 rounded-xl border hover:border-gray-400 text-gray-800 hover:text-gray-900 transition">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+  <path d="M5.25 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM2.25 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM18.75 7.5a.75.75 0 0 0-1.5 0v2.25H15a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H21a.75.75 0 0 0 0-1.5h-2.25V7.5Z" />
+</svg>
+</button>
+
                   <button type="button" className="inline-flex items-center justify-center h-9 px-3 rounded-xl border hover:border-gray-400 text-gray-800 hover:text-gray-900 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-chat-fill" viewBox="0 0 16 16">
                       <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z"/>
@@ -595,19 +784,20 @@ useEffect(() => {
                     <div className="col-span-2">
                       <div className="p-4 bg-purple-100 rounded-xl text-gray-800">
                         <div className="font-bold text-xl leading-none">Your daily plan</div>
-                        <div className="mt-2">5 of 8 completed</div>
+<div className="mt-2">
+  {currentProject.tasks.filter(task => task.status === "Completed").length} of {currentProject.tasks.length} completed
+</div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div>
-                  <div className="space-x-5">
+                  <div className="space-x-5 flex">
                     <h2 className="text-2xl font-bold mb-4 my-auto">Your tasks today</h2>
-                    <span    onClick={openModal} className=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="50" height="50" fill="none" stroke="currentColor"stroke-width="2" stroke-linecap="round"stroke-linejoin="round">
-                   <circle cx="12" cy="12" r="10" />
-                   <line x1="12" y1="8" x2="12" y2="16" />
-                   <line x1="8" y1="12" x2="16" y2="12" /></svg>
-                    </span>
+
+<svg onClick={openModal} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+</svg>
                   </div>
                   
                   <div className="space-y-4">
@@ -616,15 +806,95 @@ useEffect(() => {
                         currentProject?.tasks.map((task,index)=>(
                     <div className="p-4 bg-white border rounded-xl text-gray-800 space-y-2">
                       <div className="flex justify-between">
-                        <div className="text-gray-400 text-xs">Number {index+1}</div>
-                        <div className="text-gray-400 text-xs">{task.createdAt}</div>
+                        <div className="text-gray-400 text-xs">Task {index+1}</div>
+                        <div className="text-gray-400 text-xs">{task.status}</div>
                       </div>
                       <a href="javascript:void(0)" className="font-bold hover:text-yellow-800 hover:underline">{task.name}</a>
                       <div className="text-sm text-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="text-gray-800 inline align-middle mr-1" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill={`${labelOptions.find((label) => label.label === task.ranking)?.svg}`}className={`text-gray-800 inline align-middle mr-1`} viewBox="0 0 16 16">
                           <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                        </svg>{task.description}
+                        </svg>{task.ranking}
+
                       </div>
+                      <div className="text-sm text-gray-600">
+                        <p>{task.description}</p>
+
+                      </div>
+<Menu>
+  <div className="flex justify-evenly">
+      <Menu.Button className="inline-flex w-full justify-center rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-black hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+        More
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+  </svg>
+      </Menu.Button>
+  </div>
+      <Transition
+          as={Fragment}
+          enter="transition ease-out duration-100"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
+        >
+      <Menu.Items className={'className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"'}>
+        <Menu.Item>
+          {({ active }) => (
+            <a
+             className={`flex w-full items-center rounded-md px-2 py-2 text-sm`} 
+            >
+ <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+</svg>
+Edit
+            </a>
+          )}
+        </Menu.Item>
+        <Menu.Item>
+          {({ active }) => (
+            <a onClick={()=>{deleteTask(task._id)}}
+              className={`flex w-full items-center rounded-md px-2 py-2 text-sm`}  >
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+</svg>
+Delete
+            </a>
+          )}
+        </Menu.Item>
+        {
+          task.status==='Completed'?(
+            <>
+                    <Menu.Item>
+          <a onClick={()=>{updateTask({taskId:task._id,status:"Pending"})}
+          } className={`flex w-full items-center rounded-md px-2 py-2 text-sm`} >
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
+</svg>
+
+Mark as InComplete
+</a>
+        </Menu.Item>
+            </>
+          ):(
+            <>
+                    <Menu.Item>
+          <a onClick={()=>{updateTask({taskId:task._id,status:"Completed"})}
+          } className={`flex w-full items-center rounded-md px-2 py-2 text-sm`} >
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+</svg>
+Mark as Complete
+</a>
+        </Menu.Item>
+            </>
+          )
+        }
+
+      </Menu.Items>
+      </Transition>
+    </Menu>
+
                     </div>
                         ))
                       )
