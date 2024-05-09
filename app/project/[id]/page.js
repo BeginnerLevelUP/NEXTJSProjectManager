@@ -1,79 +1,167 @@
 'use client'
+import {
+  Input,
+  Popover,
+  PopoverHandler,
+  PopoverContent,
+} from "@material-tailwind/react";
+import Nav from "@/app/components/nav";
+import { format } from "date-fns";
+import { DayPicker } from "react-day-picker";
 import { useState,useEffect } from "react"
 import { Fragment } from "react";
-import { Combobox, Transition,Dialog,Tab,Menu} from "@headlessui/react";
+import { Combobox, Transition,Dialog,Listbox} from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import DotLoader from "react-spinners/DotLoader";
+import { useSession } from "next-auth/react";
 
 const projectPage = ({ params }) => {
-  const people = [
-  { id: 1, name: 'Durward Reynolds' },
-  { id: 2, name: 'Kenton Towne' },
-  { id: 3, name: 'Therese Wunsch' },
-  { id: 4, name: 'Benedict Kessler' },
-  { id: 5, name: 'Katelyn Rohan' },
-]
-
+  const [date, setDate] = useState()
+  let [isOpen, setIsOpen] = useState(false)
+  const { data: session } = useSession();
+  const user = session?.user;
+  const [userData, setUserData] = useState();
+  const [currentProject,setCurrentProject]=useState()
+  const [people,setPeople]=useState([])
   const [selected, setSelected] = useState(people[0]);
+const [selectedLabel, setSelectedLabel] = useState(null);
   const [query, setQuery] = useState("");
-
+  const labelOptions = [
+    { label: 'Regular', property: 'regular', color: 'bg-green-500' },
+    { label: 'Important', property: 'important', color: 'bg-blue-500' },
+    { label: 'Detrimental', property: 'detrimental', color: 'bg-red-500' }
+  ];
   const filteredPeople =
     query === ""
       ? people
       : people.filter((person) =>
-          person.name
+          person.username
             .toLowerCase()
             .replace(/\s+/g, "")
             .includes(query.toLowerCase().replace(/\s+/g, ""))
         );
-        
-  const fetchProject=async()=>{
-const projectQuery=`query Project($projectId: ID!) {
-  project(id: $projectId) {
+
+
+  const fetchUserAssociates = async () => {
+    const userQuery = `
+query User($userId: ID!) {
+  user(id: $userId) {
     _id
-    dateCreated
-    dateUpdated
-    name
-    description
-    completed
-    gitRepoUrl
-    deployedSite
-    comments {
-      _id
-      text
-      user {
-        _id
-        username
-        email
-        password
-      }
-      createdAt
-      replies {
-        _id
-        text
-        createdAt
-      }
-    }
-    tasks {
-      _id
-      name
-      description
-      status
-      dueDate
-      assignedTo {
-        _id
-        username
-        email
-        password
-      }
-      ranking
-      createdAt
-    }
-    members {
+    username
+    email
+    password
+    associates {
       _id
       username
       email
       password
+    }
+    projects {
+      _id
+      dateCreated
+      dateUpdated
+      name
+      description
+      completed
+      gitRepoUrl
+      deployedSite
+      comments {
+        _id
+        text
+        user {
+          _id
+          username
+          email
+          password
+        }
+        createdAt
+        replies {
+          _id
+          text
+          createdAt
+        }
+      }
+      tasks {
+        _id
+        name
+        description
+        status
+        dueDate
+        assignedTo {
+          _id
+          username
+          email
+          password
+        }
+        ranking
+        createdAt
+      }
+      members {
+        _id
+        username
+        email
+        password
+      }
+    }
+  }
+}
+    `;
+
+    try {
+      const res = await fetch("http://localhost:3000/api/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: userQuery,
+          variables: {
+            userId: user?.email,
+          },
+        }),
+      });
+
+      const { data, errors } = await res.json();
+
+      if (errors) {
+        console.error("Error Fetching User Projects:", errors);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error Fetching User Projects:", error.message);
+      return null;
+    }
+  };
+
+  const createTask=async(
+    projectId,
+      name,
+      description,
+      dueDate,
+      assignedTo,
+      status,
+      ranking,)=>{
+    const taskMutation=`
+    mutation Mutation($name: String!, $description: String!, $projectId: ID!, $dueDate: String, $assignedTo: [ID], $ranking: String, $status: String) {
+  createTask(name: $name, description: $description, projectId: $projectId, dueDate: $dueDate, assignedTo: $assignedTo, ranking: $ranking, status: $status) {
+    _id
+    name
+    description
+    status
+    dueDate
+    assignedTo {
+      _id
+      username
+      email
+      password
+      associates {
+        _id
+        username
+        email
+        password
+      }
       projects {
         _id
         dateCreated
@@ -83,157 +171,278 @@ const projectQuery=`query Project($projectId: ID!) {
         completed
         gitRepoUrl
         deployedSite
+        comments {
+          _id
+          text
+          user {
+            _id
+            username
+            email
+            password
+          }
+          createdAt
+          replies {
+            _id
+            text
+            createdAt
+          }
+        }
+        tasks {
+          _id
+          name
+          description
+          status
+          dueDate
+          ranking
+          createdAt
+        }
+        members {
+          _id
+          username
+          email
+          password
+        }
       }
     }
+    ranking
+    createdAt
   }
-}`
-try{
-const res=await fetch(
-  				`http://localhost:3000/api/graphql`,{
+}
+    `
+ try {
+			const res = await fetch(
+				`http://localhost:3000/api/graphql`,{
           method:"POST",
             headers: {
     "Content-Type": "application/json"
   },
 
   body: JSON.stringify({
-    query:projectQuery,
+    query:taskMutation,
      variables:{
-      projectId:params.id
+      projectId,
+      name,
+      description,
+      dueDate,
+      assignedTo,
+      ranking
     }
   })
-})
+        }
+			);    
+      const { data, errors } = await res.json();
 
-const {data,errors}=await res.json()
-if(errors){
-console.log('Error Creating Project:', errors);
-}
-return data
-
-}catch(e){
-  console.log(e instanceof Error ? e.message : "Uknown Error")
-}
+    if (errors) {
+      console.error('Error Creating Project:', errors);
+		} 
+  }catch (err) {
+		console.log(err instanceof Error ? err.message : 'unknow error')
+		}
   }
-  useEffect(() => {
-    const fetchAndSetProject = async () => {
-      const projectData = await fetchProject();
-      setCurrentProject(projectData?.project);
-    };
 
-    fetchAndSetProject();
-  }, [params.id]);
-  const [currentProject,setCurrentProject]=useState()
-    let [isOpen, setIsOpen] = useState(false)
+useEffect(() => {
+  const fetchData = async () => {
+    const data = await fetchUserAssociates();
+    if (data) {
+      setUserData(data.user);
 
+      const foundProject = data.user.projects.find(
+        (project) => project._id === params.id
+      );
+      setCurrentProject(foundProject);
+      setPeople(data?.user?.associates)
+    }
+  };
+
+  fetchData();
+}, [user?.email, params.id]);
+
+
+        
   function closeModal() {
     setIsOpen(!isOpen)
   }
-
   function openModal() {
     setIsOpen(!isOpen)
   }
   return (
   currentProject?(
 <>
-                <div className="text-center">
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/25" />
-          </Transition.Child>
+<Nav></Nav>
+<div className="text-center">
+  <Transition appear show={isOpen} as={Fragment}>
+    <Dialog as="div" className="fixed inset-0 z-10" onClose={closeModal}>
+      <Transition.Child
+        as={Fragment}
+        enter="ease-out duration-300"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="ease-in duration-200"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <div className="fixed inset-0 bg-black/25" />
+      </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
-                  >
-                   Create New Task
-                  </Dialog.Title>
-                  <div className="grid md:grid-cols-2 md:gap-6 my-6">
+      <div className="fixed inset-0 flex items-center justify-center overflow-y-auto">
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0 scale-95"
+          enterTo="opacity-100 scale-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100 scale-100"
+          leaveTo="opacity-0 scale-95"
+        >
+          <Dialog.Panel className="w-full max-w-md overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+            <Dialog.Title
+              as="h3"
+              className="text-lg font-medium leading-6 text-gray-900"
+            >
+              Create New Task
+            </Dialog.Title>
+            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 my-6">
 
-              <div className="relative mb-6" data-te-input-wrapper-init>
-                <input type="email"
-                  className="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
-                  id="exampleFormControlInput3" placeholder="Email address" />
-                <label htmlFor="exampleFormControlInput3"
-                  className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">
+              {/* Email Input */}
+              <div className="relative mb-6">
+                <input
+                  type="text"
+                  className="peer block w-full min-h-[auto] rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+                  id="exampleFormControlInput3"
+                  placeholder="Task Name"
+                />
+                <label
+                  htmlFor="exampleFormControlInput3"
+                  className="absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
+                >
                   Name
                 </label>
               </div>
 
-              <div className="relative mb-6" data-te-input-wrapper-init>
-                <input type="password"
-                  className="peer block min-h-[auto] w-full rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
-                  id="exampleFormControlInput4" placeholder="Password" />
-                <label htmlFor="exampleFormControlInput4"
-                  className="pointer-events-none absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">Description
+              {/* Password Input */}
+              <div className="relative mb-6">
+                <input
+                  type="text"
+                  className="peer block w-full min-h-[auto] rounded border-0 bg-transparent py-[0.32rem] px-3 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+                  id="exampleFormControlInput4"
+                  placeholder="Task Description"
+                />
+                <label
+                  htmlFor="exampleFormControlInput4"
+                  className="absolute top-0 left-3 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
+                >
+                  Description
                 </label>
               </div>
 
-              <div className="relative mb-6" data-te-input-wrapper-init>
-                due date
+              {/* Due Date */}
+              <div className="z-40">
+<div>
+      <Popover placement="bottom">
+        <PopoverHandler>
+          <Input
+            label="Select a Date"
+            onChange={() => null}
+            value={date ? format(date, "PPP") : ""}
+          />
+        </PopoverHandler>
+        <PopoverContent>
+          <DayPicker
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            showOutsideDays
+            className="border-0 z-50 bg-purple-400 text-white"
+            classNames={{
+              caption: "flex justify-center py-2 mb-4 relative items-center z-50 bg-purple-400 text-white",
+              caption_label: "text-sm font-medium text-gray-900 z-50 bg-purple-400 text-white bg-purple-400 text-white",
+              nav: "flex items-center z-50 bg-purple-400 text-white",
+              nav_button:
+                "h-6 w-6 bg-transparent hover:bg-blue-gray-50 p-1 rounded-md transition-colors duration-300 z-50 bg-purple-400 text-white",
+              nav_button_previous: "absolute left-1.5 z-50 bg-purple-400 text-white",
+              nav_button_next: "absolute right-1.5 z-50 bg-purple-400 text-white",
+              table: "w-full border-collapse z-50 bg-purple-400 text-white",
+              head_row: "flex font-medium text-gray-900 z-50 bg-purple-400 text-white",
+              head_cell: "m-0.5 w-9 font-normal text-sm z-50 bg-purple-400 text-white",
+              row: "flex w-full mt-2 z-50 bg-purple-400 text-white",
+              cell: " z-50 bg-purple-400 text-white text-gray-600 rounded-md h-9 w-9 text-center text-sm p-0 m-0.5 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-gray-900/20 [&:has([aria-selected].day-outside)]:text-white [&:has([aria-selected])]:bg-gray-900/50 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+              day: "z-50 bg-purple-400 text-white h-9 w-9 p-0 font-normal",
+              day_range_end: "z-50 bg-purple-400 text-white day-range-end",
+              day_selected:
+                "z-50 bg-purple-400 text-white rounded-md bg-gray-900 text-white hover:bg-gray-900 hover:text-white focus:bg-gray-900 focus:text-white",
+              day_today: "z-50 bg-purple-400 text-white rounded-md bg-gray-200 text-gray-900",
+              day_outside:
+                "z-50 bg-purple-400 text-white day-outside text-gray-500 opacity-50 aria-selected:bg-gray-500 aria-selected:text-gray-900 aria-selected:bg-opacity-10",
+              day_disabled: "z-50 bg-purple-400 text-white text-gray-500 opacity-50",
+              day_hidden: "z-50 bg-purple-400 text-white invisible",
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
               </div>
+ 
 
-
-              <div className="relative mb-6" data-te-input-wrapper-init>
- <Menu>
-      <Menu.Button>More</Menu.Button>
-      <Menu.Items>
-        <Menu.Item>
-          {({ active }) => (
-            <a
-              className={`${active && 'bg-blue-500'}`}
-              href="/account-settings"
+              {/* More Menu */}
+    <div className="relative">
+      <div className="">
+        <Listbox value={selectedLabel} onChange={setSelectedLabel}>
+          <div className="relative mt-1">
+            <Listbox.Button className={`relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm ${selectedLabel ? selectedLabel.color : 'bg-gray-200'}`}>
+              <span className="block truncate textr-white">{selectedLabel?.label}</span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+              </span>
+            </Listbox.Button>
+            <Transition
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
             >
-              Account settings
-            </a>
-          )}
-        </Menu.Item>
-        <Menu.Item>
-          {({ active }) => (
-            <a
-              className={`${active && 'bg-blue-500'}`}
-              href="/account-settings"
-            >
-              Documentation
-            </a>
-          )}
-        </Menu.Item>
-        <Menu.Item disabled>
-          <span className="opacity-75">Invite a friend (coming soon!)</span>
-        </Menu.Item>
-      </Menu.Items>
-    </Menu>
-              </div>
+              <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                {labelOptions.map((option, idx) => (
+                  <Listbox.Option
+                    key={idx}
+                    className={({ active }) =>
+                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                        active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
+                      }`
+                    }
+                    value={option}
+                  >
+                    {({ selected }) => (
+                      <>
+                        <span
+                          className={`block truncate ${
+                            selected ? 'font-medium' : 'font-normal'
+                          }`}
+                        >
+                          {option.label}
+                        </span>
+                        {selected ? (
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                          </span>
+                        ) : null}
+                      </>
+                    )}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </Transition>
+          </div>
+        </Listbox>
+      </div>
+    </div>
 
-              <div className="" data-te-input-wrapper-init>
-        <div className="items-center justify-center p-12">
-      <div className="w-72 object-fill top-16">
-        <Combobox value={people} onChange={setSelected}>
+              {/* Assign To */}
+              <div className="relative">
+        <Combobox value={selected} onChange={setSelected}>
           <Combobox.Label>Assign To:</Combobox.Label>
           <div className="relative mt-1">
             <div className="relative w-full text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-teal-300 focus-visible:ring-offset-2 sm:text-sm overflow-hidden">
               <Combobox.Input
                 className="w-full border-none focus:ring-0 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900"
-                displayValue={(person) => person.name}
+                displayValue={(person) => person.username}
                 onChange={(event) => setQuery(event.target.value)}
               />
               <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -258,7 +467,7 @@ return data
                 ) : (
                   filteredPeople.map((person) => (
                     <Combobox.Option
-                      key={person.id}
+                      key={person._id}
                       className={({ active }) =>
                         `cursor-default select-none relative py-2 pl-10 pr-4 ${
                           active ? "text-white bg-teal-600" : "text-gray-900"
@@ -273,7 +482,7 @@ return data
                               selected ? "font-medium" : "font-normal"
                             }`}
                           >
-                            {person.name}
+                            {person.username}
                           </span>
                           {selected ? (
                             <span
@@ -296,44 +505,54 @@ return data
             </Transition>
           </div>
         </Combobox>
-      </div>
-    </div>
               </div>
-              <button type="button" data-te-ripple-init data-te-ripple-color="light"
-                className=" mx-24 mb-6 inline-block w-full rounded bg-primary px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] ">
-                Create
-              </button>
-                  </div>
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
             </div>
-          </div>
-        </Dialog>
-      </Transition>
-              </div>
+            <button 
+            onClick={()=>{createTask(currentProject._id,'one','try',date||null,selected?._id||null,selectedLabel.label||null)}}
+              type="button"
+              className="w-full rounded bg-primary px-6 py-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+            >
+              Create
+            </button>
+            <div className="mt-4">
+              <button
+                type="button"
+                className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                onClick={closeModal}
+              >
+                Cancel
+              </button>
+            </div>
+          </Dialog.Panel>
+        </Transition.Child>
+      </div>
+    </Dialog>
+  </Transition>
+</div>
 
-            <div className="bg-white rounded-3xl p-8 mb-5">
+
+<div className="bg-white rounded-3xl p-8 mb-5">
               <h1 className="text-3xl font-bold mb-10">{currentProject.name}</h1>
               <div className="flex items-center justify-between">
                 <div className="flex items-stretch">
                   <div className="text-gray-400 text-xs">Members<br />connected</div>
                   <div className="h-100 border-l mx-4"></div>
                   <div className="flex flex-nowrap -space-x-3">
-                    <div className="h-9 w-9">
-                      <img className="object-cover w-full h-full rounded-full" src="https://ui-avatars.com/api/?background=random" alt="avatar1" />
-                    </div>
-                    <div className="h-9 w-9">
-                      <img className="object-cover w-full h-full rounded-full" src="https://ui-avatars.com/api/?background=random" alt="avatar2" />
-                    </div>
+
+{
+  currentProject?.memembers?.length>0? (
+  currentProject.memembers.map(ass => (
+      <div key={ass._id} className="h-9 w-9">
+        <img className="object-cover w-full h-full rounded-full" src="https://ui-avatars.com/api/?background=random" alt="avatar1" />
+      </div>
+    ))
+  ) : (
+    <p>No Members</p>
+  )
+}
+
+
+
                   </div>
                 </div>
                 <div className="flex items-center gap-x-2">
@@ -357,7 +576,7 @@ return data
                   <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2">
                       <div className="p-4 bg-green-100 rounded-xl">
-                        <div className="font-bold text-xl text-gray-800 leading-none">Good day, <br />Kristin</div>
+                        <div className="font-bold text-xl text-gray-800 leading-none">Good day, <br />{userData ? userData.email :username}</div>
                         <div className="mt-5">
                           <button type="button" className="inline-flex items-center justify-center py-2 px-3 rounded-xl bg-white text-gray-800 hover:text-green-500 text-sm font-semibold transition">
                             Start tracking
@@ -390,44 +609,33 @@ return data
                    <line x1="8" y1="12" x2="16" y2="12" /></svg>
                     </span>
                   </div>
+                  
                   <div className="space-y-4">
+                    {
+                      currentProject.tasks.length>0 ?(
+                        currentProject?.tasks.map((task,index)=>(
                     <div className="p-4 bg-white border rounded-xl text-gray-800 space-y-2">
                       <div className="flex justify-between">
-                        <div className="text-gray-400 text-xs">Number 10</div>
-                        <div className="text-gray-400 text-xs">4h</div>
+                        <div className="text-gray-400 text-xs">Number {index+1}</div>
+                        <div className="text-gray-400 text-xs">{task.createdAt}</div>
                       </div>
-                      <a href="javascript:void(0)" className="font-bold hover:text-yellow-800 hover:underline">Blog and social posts</a>
+                      <a href="javascript:void(0)" className="font-bold hover:text-yellow-800 hover:underline">{task.name}</a>
                       <div className="text-sm text-gray-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="text-gray-800 inline align-middle mr-1" viewBox="0 0 16 16">
                           <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                        </svg>Deadline is today
+                        </svg>{task.description}
                       </div>
                     </div>
-                    <div className="p-4 bg-white border rounded-xl text-gray-800 space-y-2">
-                      <div className="flex justify-between">
-                        <div className="text-gray-400 text-xs">Grace Aroma</div>
-                        <div className="text-gray-400 text-xs">7d</div>
-                      </div>
-                      <a href="javascript:void(0)" className="font-bold hover:text-yellow-800 hover:underline">New campaign review</a>
-                      <div className="text-sm text-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="text-gray-800 inline align-middle mr-1" viewBox="0 0 16 16">
-                          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                        </svg>New feedback
-                      </div>
-                    </div>
-                    <div className="p-4 bg-white border rounded-xl text-gray-800 space-y-2">
-                      <div className="flex justify-between">
-                        <div className="text-gray-400 text-xs">Petz App</div>
-                        <div className="text-gray-400 text-xs">2h</div>
-                      </div>
-                      <a href="javascript:void(0)" className="font-bold hover:text-yellow-800 hover:underline">Cross-platform and browser QA</a>
-                    </div>
+                        ))
+                      )
+                    :(
+                      <h1>No Tasks</h1>
+                    )
+                  }
                   </div>
                 </div>
               </div>
-            </div>
-
-
+</div>
 </>
   ):(
     <>

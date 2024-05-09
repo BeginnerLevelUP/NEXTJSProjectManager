@@ -3,7 +3,9 @@ import Nav from '../components/nav';
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import DotLoader from "react-spinners/DotLoader";
+import { useRouter } from 'next/navigation';
 const Page = () => {
+  const router=useRouter()
   const { data: session } = useSession();
   const user = session?.user;
   const [userData, setUserData] = useState();
@@ -67,21 +69,27 @@ const Page = () => {
       <Nav />
       <section>
         <div className="mx-auto w-full max-w-5xl px-5 py-16 md:px-10 md:py-24 lg:py-32">
-          <h2 className="text-center text-3xl font-bold md:text-5xl">My Team</h2>
-          <p className="mx-auto mb-8 mt-4 max-w-lg text-center text-[#636262] md:mb-16">Lorem ipsum dolor sit amet elit ut aliquam</p>
+          <h2 className="text-center text-3xl font-bold md:text-5xl">View and Manage Team</h2>
           <ul className="mx-auto grid lg:gap-4 sm:grid-cols-2 md:grid-cols-3 max-w-lg md:max-w-5xl">
             {userData ? (
               userData.map((data) => (
                 <li key={data._id} className="mx-auto flex max-w-xs flex-col items-center gap-4 py-6 md:py-4 text-center">
                   <img src="https://assets.website-files.com/6357722e2a5f19121d37f84d/635a0f4871ea332919af9f8d_Rectangle%2035.png" alt="" className="mb-4 inline-block h-40 w-40 rounded-full object-cover" />
                   <p className="font-bold">{data?.username}</p>
-                  <p className="text-sm text-[#636262]">Webflow Developer</p>
+                  <p className="text-sm text-[#636262]">{data?.email}</p>
                   <div className="mt-4 flex flex-wrap">
-                    <a href="#" className="mr-2 inline-block h-8 w-8 max-w-full">
-                      <img src="https://assets.website-files.com/6357722e2a5f19121d37f84d/635b4971014d2b4c0744a079_FacebookLogo.svg" alt="" className="inline-block" />
+                    <a onClick={()=>{router.push(`/profile/${data?.email}`)}} className="mr-2 inline-block h-8 w-8 max-w-full">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+</svg>
+
+
                     </a>
                     <a href="#" className="inline-block h-8 w-8 max-w-full">
-                      <img src="https://assets.website-files.com/6357722e2a5f19121d37f84d/635b4977ee8effeeefc05b5d_InstagramLogo.svg" alt="" className="inline-block" />
+ <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+</svg>
+
                     </a>
                   </div>
                 </li>
