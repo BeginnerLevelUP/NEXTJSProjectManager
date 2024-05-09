@@ -81,7 +81,7 @@ task(id: ID!): Task
     deployedSite: String
     userId: ID!): Project
     
-    updateProject(id: ID!, name: String, description: String, completed: Boolean, gitRepoUrl: String, deployedSite: String): Project
+    updateProject(id: ID!, name: String, description: String, completed: Boolean, gitRepoUrl: String, deployedSite: String,members:[ID]): Project
     deleteProject(id: ID!): Project
     addProjectMember(projectId: ID!, userId: ID!): Project
     removeProjectMember(projectId: ID!, userId: ID!): Project

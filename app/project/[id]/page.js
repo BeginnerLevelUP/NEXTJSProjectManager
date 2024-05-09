@@ -18,7 +18,7 @@ const projectPage = ({ params }) => {
   const [taskName,setProjectName]=useState('')
   const [taskDescription,setProjectDescription]=useState('')
   const [date, setDate] = useState()
-  let [isOpen, setIsOpen] = useState({open:false,edit:false})
+  let [isOpen, setIsOpen] = useState({open:false,custom:''})
   const [currentTaskId,setTask]=useState()
   const { data: session } = useSession();
   const user = session?.user;
@@ -432,6 +432,101 @@ query User($userId: ID!) {
       return null;
     }
   }
+
+  const addMembersToProject=async(id,memberId)=>{
+     const memberMutation=`mutation UpdateProject($updateProjectId: ID!, $members: [ID]) {
+  updateProject(id: $updateProjectId, members: $members) {
+    _id
+    dateCreated
+    dateUpdated
+    name
+    description
+    completed
+    gitRepoUrl
+    deployedSite
+    comments {
+      _id
+      text
+      user {
+        _id
+        username
+        email
+        password
+      }
+      createdAt
+      replies {
+        _id
+        text
+        createdAt
+      }
+    }
+    tasks {
+      _id
+      name
+      description
+      status
+      dueDate
+      assignedTo {
+        _id
+        username
+        email
+        password
+      }
+      ranking
+      createdAt
+    }
+    members {
+      _id
+      username
+      email
+      password
+      associates {
+        _id
+        username
+        email
+        password
+      }
+      projects {
+        _id
+        dateCreated
+        dateUpdated
+        name
+        description
+        completed
+        gitRepoUrl
+        deployedSite
+      }
+    }
+  }
+}`
+        try {
+      const res = await fetch("http://localhost:3000/api/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+query: memberMutation,
+          variables: {
+          updateProjectId:id,
+          members:memberId
+          },
+        }),
+      });
+
+      const { data, errors } = await res.json();
+
+      if (errors) {
+        console.error("Error Fetching User Projects:", errors);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error Fetching User Projects:", error.message);
+      return null;
+    }
+  }
 useEffect(() => {
   const fetchData = async () => {
     const data = await fetchUserAssociates();
@@ -451,18 +546,21 @@ useEffect(() => {
 
 
         
-  function handleTaskModal(edit,task) {
-    setIsOpen({open:!isOpen.open,edit:edit})
-    setTask(task)
-  }
-
+function handleTaskModal(edit, task) {
+  setIsOpen((prevOpenState) => ({
+    ...prevOpenState,
+    open: !prevOpenState.open,
+    custom: edit 
+  }));
+  setTask(task);
+}
   return (
   currentProject?(
 <>
 <Nav></Nav>
 <div className="text-center">
   <Transition appear show={isOpen.open} as={Fragment}>
-    <Dialog as="div" className="fixed inset-0 z-10" onClose={()=>{handleTaskModal(false,'')}}>
+    <Dialog as="div" className="fixed inset-0 z-10" onClose={()=>{handleTaskModal('create','')}}>
       <Transition.Child
         as={Fragment}
         enter="ease-out duration-300"
@@ -486,11 +584,102 @@ useEffect(() => {
           leaveTo="opacity-0 scale-95"
         >
           <Dialog.Panel className="w-full max-w-md overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                 {
+        isOpen.custom==='member'?(
+          <>
+            {/* Assign To */}
+              <Dialog.Title
+               as="h3"
+              className="text-lg font-medium leading-6 text-gray-900"
+            >
+             Add Members
+            </Dialog.Title>
+              <div className="relative w-52 h-36 m-auto py-auto">
+        <Combobox value={selected} onChange={setSelected}>
+          <Combobox.Label>Assign To:</Combobox.Label>
+          <div className="relative mt-1">
+            <div className="relative w-full text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-teal-300 focus-visible:ring-offset-2 sm:text-sm overflow-hidden">
+              <Combobox.Input
+                className="w-full border-none focus:ring-0 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900"
+                displayValue={(person) => person.username}
+                onChange={(event) => setQuery(event.target.value)}
+              />
+              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <SelectorIcon
+                  className="w-5 h-5 text-gray-400"
+                  aria-hidden="true"
+                />
+              </Combobox.Button>
+            </div>
+            <Transition
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+              afterLeave={() => setQuery("")}
+            >
+              <Combobox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                {filteredPeople.length === 0 && query !== "" ? (
+                  <div className="cursor-default select-none relative py-2 px-4 text-gray-700">
+                    Nothing found.
+                  </div>
+                ) : (
+                  filteredPeople.map((person) => (
+                    <Combobox.Option
+                      key={person._id}
+                      className={({ active }) =>
+                        `cursor-default select-none relative py-2 pl-10 pr-4 ${
+                          active ? "text-white bg-teal-600" : "text-gray-900"
+                        }`
+                      }
+                      value={person}
+                    >
+                      {({ selected, active }) => (
+                        <>
+                          <span
+                            className={`block truncate ${
+                              selected ? "font-medium" : "font-normal"
+                            }`}
+                          >
+                            {person.username}
+                          </span>
+                          {selected ? (
+                            <span
+                              className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                active ? "text-white" : "text-teal-600"
+                              }`}
+                            >
+                              <CheckIcon
+                                className="w-5 h-5"
+                                aria-hidden="true"
+                              />
+                            </span>
+                          ) : null}
+                        </>
+                      )}
+                    </Combobox.Option>
+                  ))
+                )}
+              </Combobox.Options>
+            </Transition>
+          </div>
+        </Combobox>
+              </div>
+            <button 
+              onClick={()=>{addMembersToProject(currentProject._id,selected._id)}}
+              type="button"
+              className="w-full rounded bg-primary px-6 py-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+            >
+            Add Member
+            </button>
+          </>
+        ):(
+          <>
             <Dialog.Title
               as="h3"
               className="text-lg font-medium leading-6 text-gray-900"
             >
-              {isOpen.edit ? "Edit Task" : "Create New Task"}
+              {isOpen.custom==='edit' ? "Edit Task" : "Create New Task"}
             </Dialog.Title>
             <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 my-6">
 
@@ -580,7 +769,7 @@ useEffect(() => {
 
               {/* More Menu */}
     <div className="relative">
-      <div className="">
+                 <div className="">
         <Listbox value={selectedLabel} onChange={setSelectedLabel}>
           <div className="relative mt-1">
             <Listbox.Button className={`relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm ${selectedLabel ? selectedLabel.color : 'bg-gray-200'}`}>
@@ -627,6 +816,7 @@ useEffect(() => {
           </div>
         </Listbox>
       </div>
+
     </div>
 
               {/* Assign To */}
@@ -704,7 +894,7 @@ useEffect(() => {
             </div>
             <button 
             onClick={
-              isOpen.edit ?
+              isOpen.custom==='edit' ?
                 ()=>{updateTask({taskId:currentTaskId,date:date||null,assignedTo:selected?._id||null,ranking:selectedLabel?.label||null,name:taskName,description:taskDescription})}
               :
              ()=>{createTask(currentProject._id,taskName,taskDescription,date||null,selected?._id||null,selectedLabel?.label||null)}
@@ -712,17 +902,20 @@ useEffect(() => {
               type="button"
               className="w-full rounded bg-primary px-6 py-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
             >
-             {isOpen.edit ? "Edit" : "Create"}
+             {isOpen.custom==='edit' ? "Edit" : "Create"}
             </button>
             <div className="mt-4">
               <button
                 type="button"
                 className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                onClick={()=>{()=>{handleTaskModal(false,'')}}}
+                onClick={()=>{()=>{handleTaskModal('create','')}}}
               >
                 Cancel
               </button>
             </div>
+          </>
+        )
+      }
           </Dialog.Panel>
         </Transition.Child>
       </div>
@@ -755,7 +948,7 @@ useEffect(() => {
 
                   </div>
                 </div>
-                <div className="flex items-center gap-x-2">
+                <div onClick={()=>{handleTaskModal('member')}} className="flex items-center gap-x-2">
                   <button type="button" className="inline-flex items-center justify-center h-9 px-3 rounded-xl border hover:border-gray-400 text-gray-800 hover:text-gray-900 transition">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
   <path d="M5.25 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM2.25 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM18.75 7.5a.75.75 0 0 0-1.5 0v2.25H15a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H21a.75.75 0 0 0 0-1.5h-2.25V7.5Z" />
@@ -812,7 +1005,7 @@ useEffect(() => {
                   <div className="space-x-5 flex">
                     <h2 className="text-2xl font-bold mb-4 my-auto">Your tasks today</h2>
 
-<svg onClick={()=>{handleTaskModal(false)}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+<svg onClick={()=>{handleTaskModal('create')}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
 </svg>
                   </div>
@@ -858,7 +1051,7 @@ useEffect(() => {
       <Menu.Items className={'className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"'}>
         <Menu.Item>
           {({ active }) => (
-            <a onClick={()=>{handleTaskModal(true,task._id)}}
+            <a onClick={()=>{handleTaskModal('edit',task._id)}}
              className={`flex w-full items-center rounded-md px-2 py-2 text-sm`} 
             >
  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">

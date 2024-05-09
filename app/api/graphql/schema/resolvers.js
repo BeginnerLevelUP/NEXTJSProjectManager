@@ -213,18 +213,22 @@ const user = await User.findOne({
   }
     }    
 ,
-    updateProject: async (_, { id, name, description, completed, gitRepoUrl, deployedSite }) => {
-      try {
-        const updatedProject = await Project.findByIdAndUpdate(
-          id,
-          { name, description, completed, gitRepoUrl, deployedSite },
-          { new: true }
-        );
-        return updatedProject;
-      } catch (error) {
-        throw new Error("Could not update project");
-      }
-    },
+updateProject: async (_, { id, name, description, completed, gitRepoUrl, deployedSite, members }) => {
+  try {
+    const updatedProject = await Project.findByIdAndUpdate(
+      id,
+      {
+        $set: { name, description, completed, gitRepoUrl, deployedSite },
+        $addToSet: { members } // Using $addToSet to add members without duplicates
+      },
+      { new: true }
+    );
+    return updatedProject;
+  } catch (error) {
+    throw new Error("Could not update project");
+  }
+},
+
     deleteProject: async (_, { id }) => {
       try {
         const deletedProject = await Project.findByIdAndDelete(id);
