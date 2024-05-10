@@ -1008,14 +1008,7 @@ addMembersToProject(currentProject._id, updatedMembers);
                         </div>
                       </div>
                     </div>
-                    {/* <div className="p-4 bg-yellow-100 rounded-xl text-gray-800">
-                      <div className="font-bold text-2xl leading-none">20</div>
-                      <div className="mt-2">Tasks finished</div>
-                    </div>
-                    <div className="p-4 bg-yellow-100 rounded-xl text-gray-800">
-                      <div className="font-bold text-2xl leading-none">5,5</div>
-                      <div className="mt-2">Tracked hours</div>
-                    </div> */}
+
                     <div className="col-span-2">
                       <div className="p-4 bg-purple-100 rounded-xl text-gray-800">
                         <div className="font-bold text-xl leading-none">Your daily plan</div>
