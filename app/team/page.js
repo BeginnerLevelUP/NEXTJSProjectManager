@@ -74,7 +74,7 @@ const Page = () => {
             {userData ? (
               userData.map((data) => (
                 <li key={data._id} className="mx-auto flex max-w-xs flex-col items-center gap-4 py-6 md:py-4 text-center">
-                  <img src="https://assets.website-files.com/6357722e2a5f19121d37f84d/635a0f4871ea332919af9f8d_Rectangle%2035.png" alt="" className="mb-4 inline-block h-40 w-40 rounded-full object-cover" />
+                  <img src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt="" className="mb-4 inline-block h-40 w-40 rounded-full object-cover" />
                   <p className="font-bold">{data?.username}</p>
                   <p className="text-sm text-[#636262]">{data?.email}</p>
                   <div className="mt-4 flex flex-wrap">

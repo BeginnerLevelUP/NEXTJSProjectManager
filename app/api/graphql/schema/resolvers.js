@@ -215,20 +215,27 @@ const user = await User.findOne({
 ,
 updateProject: async (_, { id, name, description, completed, gitRepoUrl, deployedSite, members }) => {
   try {
+    // Update the project
     const updatedProject = await Project.findByIdAndUpdate(
       id,
       {
-        $set: { name, description, completed, gitRepoUrl, deployedSite },
-        $addToSet: { members } // Using $addToSet to add members without duplicates
+        $set: { name, description, completed, gitRepoUrl, deployedSite, members },
       },
       { new: true }
     );
+
+    // Add the project to the associated users
+    await User.updateMany(
+      { _id: { $in: members } }, // Find users by their IDs
+      { $addToSet: { projects: id } } // Add the project ID to their projects array
+    );
+
     return updatedProject;
   } catch (error) {
     throw new Error("Could not update project");
   }
-},
-
+}
+,
     deleteProject: async (_, { id }) => {
       try {
         const deletedProject = await Project.findByIdAndDelete(id);

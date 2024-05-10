@@ -554,6 +554,15 @@ function handleTaskModal(edit, task) {
   }));
   setTask(task);
 }
+        
+function handleTaskModal(edit, task) {
+  setIsOpen((prevOpenState) => ({
+    ...prevOpenState,
+    open: !prevOpenState.open,
+    custom: edit 
+  }));
+  setTask(task);
+}
   return (
   currentProject?(
 <>
@@ -666,13 +675,31 @@ function handleTaskModal(edit, task) {
         </Combobox>
               </div>
             <button 
-              onClick={()=>{addMembersToProject(currentProject._id,selected._id)}}
+             onClick={() => { 
+const updatedMembers = [...currentProject.members.map(member => member?.id), selected._id];
+addMembersToProject(currentProject._id, updatedMembers);
+  }}
               type="button"
               className="w-full rounded bg-primary px-6 py-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
             >
             Add Member
             </button>
+
+           <button 
+  onClick={() => {
+    const updatedMemberIds = currentProject.members
+      .filter(member => member?._id !== selected._id)
+      .map(member => member?._id);
+    addMembersToProject(currentProject._id, updatedMemberIds);
+  }}
+  type="button"
+  className="w-full rounded bg-danger px-6 py-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-danger-800 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-danger-800 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-danger-800 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+>
+  Remove Member
+</button>
+
           </>
+
         ):(
           <>
             <Dialog.Title
@@ -932,37 +959,35 @@ function handleTaskModal(edit, task) {
                   <div className="h-100 border-l mx-4"></div>
                   <div className="flex flex-nowrap -space-x-3">
 
-{
-  currentProject?.members?.length>0? (
+
+ {currentProject?.members && currentProject.members.length > 0 ? (
   currentProject.members.map(ass => (
-      <div key={ass._id} className="h-9 w-9">
-        <img className="object-cover w-full h-full rounded-full" src="https://ui-avatars.com/api/?background=random" alt="avatar1" />
-      </div>
-    ))
-  ) : (
-    <p>No Members</p>
-  )
-}
+    <div key={ass?._id} className="h-9 w-9">
+      <img className="object-cover w-full h-full rounded-full"  src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt="avatar1" />
+    </div>
+  ))
+) : (
+  <p>No Members</p>
+)}
+
 
 
 
                   </div>
                 </div>
-                <div onClick={()=>{handleTaskModal('member')}} className="flex items-center gap-x-2">
-                  <button type="button" className="inline-flex items-center justify-center h-9 px-3 rounded-xl border hover:border-gray-400 text-gray-800 hover:text-gray-900 transition">
+                <div className="flex items-center gap-x-2">
+                  <button  onClick={()=>{handleTaskModal('member')}} type="button" className="inline-flex items-center justify-center h-9 px-3 rounded-xl border hover:border-gray-400 text-gray-800 hover:text-gray-900 transition">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
   <path d="M5.25 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM2.25 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM18.75 7.5a.75.75 0 0 0-1.5 0v2.25H15a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H21a.75.75 0 0 0 0-1.5h-2.25V7.5Z" />
 </svg>
-</button>
+                  </button>
+                  <button  onClick={()=>{handleTaskModal('member')}} type="button" className="inline-flex items-center justify-center h-9 px-3 rounded-xl border hover:border-gray-400 text-gray-800 hover:text-gray-900 transition">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+  <path d="M10.375 2.25a4.125 4.125 0 1 0 0 8.25 4.125 4.125 0 0 0 0-8.25ZM10.375 12a7.125 7.125 0 0 0-7.124 7.247.75.75 0 0 0 .363.63 13.067 13.067 0 0 0 6.761 1.873c2.472 0 4.786-.684 6.76-1.873a.75.75 0 0 0 .364-.63l.001-.12v-.002A7.125 7.125 0 0 0 10.375 12ZM16 9.75a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5h-6Z" />
+</svg>
 
-                  <button type="button" className="inline-flex items-center justify-center h-9 px-3 rounded-xl border hover:border-gray-400 text-gray-800 hover:text-gray-900 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-chat-fill" viewBox="0 0 16 16">
-                      <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z"/>
-                    </svg>
                   </button>
-                  <button type="button" className="inline-flex items-center justify-center h-9 px-5 rounded-xl bg-gray-900 text-gray-300 hover:text-white text-sm font-semibold transition">
-                    Open
-                  </button>
+
                 </div>
               </div>
 
@@ -970,7 +995,7 @@ function handleTaskModal(edit, task) {
 
               <div className="grid grid-cols-2 gap-x-20">
                 <div>
-                  <h2 className="text-2xl font-bold mb-4">Stats</h2>
+                  <h2 className="text-2xl font-bold mb-4">DashBoard</h2>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2">
@@ -978,19 +1003,19 @@ function handleTaskModal(edit, task) {
                         <div className="font-bold text-xl text-gray-800 leading-none">Good day, <br />{userData ? userData.email :username}</div>
                         <div className="mt-5">
                           <button type="button" className="inline-flex items-center justify-center py-2 px-3 rounded-xl bg-white text-gray-800 hover:text-green-500 text-sm font-semibold transition">
-                            Start tracking
+                           Open White Board
                           </button>
                         </div>
                       </div>
                     </div>
-                    <div className="p-4 bg-yellow-100 rounded-xl text-gray-800">
+                    {/* <div className="p-4 bg-yellow-100 rounded-xl text-gray-800">
                       <div className="font-bold text-2xl leading-none">20</div>
                       <div className="mt-2">Tasks finished</div>
                     </div>
                     <div className="p-4 bg-yellow-100 rounded-xl text-gray-800">
                       <div className="font-bold text-2xl leading-none">5,5</div>
                       <div className="mt-2">Tracked hours</div>
-                    </div>
+                    </div> */}
                     <div className="col-span-2">
                       <div className="p-4 bg-purple-100 rounded-xl text-gray-800">
                         <div className="font-bold text-xl leading-none">Your daily plan</div>
@@ -1089,7 +1114,8 @@ Mark as InComplete
           ):(
             <>
                     <Menu.Item>
-          <a onClick={()=>{updateTask({taskId:task._id,status:"Completed"})}
+          <a onClick={()=>{
+            updateTask({taskId:task._id,status:"Completed"})}
           } className={`flex w-full items-center rounded-md px-2 py-2 text-sm`} >
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
   <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />

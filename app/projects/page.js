@@ -203,9 +203,9 @@ const res = await fetch("http://localhost:3000/api/graphql", {
       console.log('Eror Deleteing Project',e instanceof Error ? e.message : "unknown Error")
     }
   }
-  const editUserProject=async(updateProjectId,name,description)=>{
-  const  editMutation=`mutation UpdateProject($updateProjectId: ID!, $name: String, $description: String) {
-  updateProject(id: $updateProjectId, name: $name, description: $description) {
+  const editUserProject=async(updateProjectId,name,description,completed)=>{
+  const  editMutation=`mutation UpdateProject($updateProjectId: ID!, $name: String, $description: String,$completed: Boolean) {
+  updateProject(id: $updateProjectId, name: $name, description: $description,completed: $completed) {
     _id
     dateCreated
     dateUpdated
@@ -281,6 +281,7 @@ const res = await fetch("http://localhost:3000/api/graphql", {
             updateProjectId,
             name,
             description,
+            completed:null||completed
           },
         }),
       });
@@ -312,16 +313,36 @@ const res = await fetch("http://localhost:3000/api/graphql", {
     setProjectDescription('');
      setProjectId('')
   }
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchUserProjects();
-      if (data) {
-        setUserData(data);
-      }
-    };
 
-    fetchData();
-  }, [user?.email]);
+useEffect(() => {
+  const fetchData = async () => {
+    const data = await fetchUserProjects();
+    if (data) {
+      setUserData(data);
+    }
+  };
+
+  fetchData();
+}, [user?.email]);
+
+useEffect(() => {
+  console.log(userData);
+  if (userData) {
+    userData?.projects?.forEach(async (currentProject) => {
+      if (currentProject.tasks.filter((task) => task.status === "Completed").length === currentProject.tasks.length) {
+        // await editUserProject(currentProject._id, currentProject.name, currentProject.description, true);
+        console.log('yes');
+      } else {
+        console.log('no');
+      }
+    });
+  }
+}, [userData]);
+
+
+
+
+
 
 
   return (
