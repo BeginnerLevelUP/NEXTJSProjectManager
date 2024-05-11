@@ -199,6 +199,7 @@ useEffect(() => {
   };
 
   fetchData();
+  router.push('/')
 }, [session]);
 
 
@@ -313,6 +314,7 @@ Object.values(providers).map((provider) => {
                   className="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500"
                   onClick={() => 
                signIn(provider.id) 
+              
               }>
                    {/* <!---- Github --> */}
                   <span className="[&>svg]:mx-4 [&>svg]:h-4 [&>svg]:w-4">
@@ -333,6 +335,7 @@ Object.values(providers).map((provider) => {
                   className="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500"
                   onClick={() => {
                signIn(provider.id)
+
                   }
               }>
                    {/* <!---- Google --> */}

@@ -1,6 +1,7 @@
 "use client"
 import { useEffect } from "react";
 import { useRouter } from 'next/navigation'
+import {signOut} from "next-auth/react"
 const Nav = () => {
       const router=useRouter()
  useEffect(() => {
@@ -165,6 +166,24 @@ const Nav = () => {
             </svg>
           </span>
           <span onClick={()=>{router.push('/team')}}>Team</span>
+        </a>
+      </li>
+                    <li
+        className="relative pt-4"
+      >
+        <span className="px-6 py-4 text-[0.6rem] font-bold uppercase text-gray-600 dark:text-gray-400">
+         End Session
+        </span>
+
+              <a
+          className="flex cursor-pointer items-center truncate rounded-[5px] px-6 py-[0.45rem] text-[0.85rem] text-gray-600 outline-none transition duration-300 ease-linear hover:bg-slate-50 hover:text-inherit hover:outline-none focus:bg-slate-50 focus:text-inherit focus:outline-none active:bg-slate-50 active:text-inherit active:outline-none data-[te-sidenav-state-active]:text-inherit data-[te-sidenav-state-focus]:outline-none motion-reduce:transition-none dark:text-gray-300 dark:hover:bg-white/10 dark:focus:bg-white/10 dark:active:bg-white/10"
+          data-te-sidenav-link-ref
+        >
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+</svg>
+
+          <span onClick={()=>{signOut()}}>LOGOUT</span>
         </a>
       </li>
             </ul>
