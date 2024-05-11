@@ -1,4 +1,5 @@
 'use client'
+import SucessMessage from "@/app/components/sucessMessage";
 import {
   Input,
   Popover,
@@ -15,6 +16,7 @@ import DotLoader from "react-spinners/DotLoader";
 import { useSession } from "next-auth/react";
 
 const projectPage = ({ params }) => {
+  const [noti,setNoti]=useState()
   const [taskName,setProjectName]=useState('')
   const [taskDescription,setProjectDescription]=useState('')
   const [date, setDate] = useState()
@@ -42,6 +44,15 @@ const [selectedLabel, setSelectedLabel] = useState(null);
             .replace(/\s+/g, "")
             .includes(query.toLowerCase().replace(/\s+/g, ""))
         );
+    const renderNoti = () => {
+    if (noti) {
+      return (
+        <div className="fixed bottom-4 left-4">
+          <SucessMessage message={noti} onClose={() => setNoti(null)} />
+        </div>
+      );
+    }
+  };
   const handleTaskNameChange=(e)=>{
     setProjectName(e.target.value)
   }
@@ -228,10 +239,11 @@ query User($userId: ID!) {
       const { data, errors } = await res.json();
 
     if (errors) {
-      console.error('Error Creating Project:', errors);
+      setNoti('Error Creating Task')
+      console.error('Error Creating Task', errors);
 		} 
     if (data && data.createTask) {
-      // Update state with the newly created task
+      setNoti('Task Created')
       const newTask = data.createTask;
       setCurrentProject((prevProject) => ({
         ...prevProject,
@@ -326,12 +338,13 @@ query User($userId: ID!) {
       const { data, errors } = await res.json();
 
       if (errors) {
-        console.error("Error Fetching User Projects:", errors);
+        setNoti('Error Deleting Task')
+        console.error('Error Deleting Task', errors);
         return null;
       }
 
    if (data && data.deleteTask) {
-      // Filter out the deleted task from the state
+      setNoti('Task Deleted')
       const updatedTasks = currentProject.tasks.filter(
         (task) => task._id !== deleteTaskId
       );
@@ -427,12 +440,13 @@ query User($userId: ID!) {
       const { data, errors } = await res.json();
 
       if (errors) {
-        console.error("Error Fetching User Projects:", errors);
+        setNoti('Error Updating Task')
+        console.error('Error Updating Task', errors);
         return null;
       }
       
           if (data && data.updateTask) {
-      // Update state with the updated task
+      setNoti('Task Updated')
       const updatedTask = data.updateTask;
       setCurrentProject((prevProject) => ({
         ...prevProject,
@@ -533,11 +547,12 @@ query: memberMutation,
       const { data, errors } = await res.json();
 
       if (errors) {
-        console.error("Error Fetching User Projects:", errors);
+        setNoti('Error Adding Members To Project')
+        console.error('Error Adding Members To Project', errors);
         return null;
       }
 if (data && data.updateProject) {
-  // Combine current members with new members, filtering out duplicates
+  setNoti('Project Members Updated')
   setCurrentProject((prevProject) => ({
     ...prevProject,
     members: [
@@ -596,6 +611,9 @@ function handleTaskModal(edit, task) {
   return (
   currentProject?(
 <>
+          {
+        renderNoti()
+      }
 <Nav></Nav>
 <div className="text-center">
   <Transition appear show={isOpen.open} as={Fragment}>

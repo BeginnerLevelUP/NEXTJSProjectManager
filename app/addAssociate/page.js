@@ -2,12 +2,21 @@
 import Nav from '../components/nav';
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-
+import SucessMessage from '../components/sucessMessage';
 export default function AddMember() {
   const { data: session } = useSession();
   const user = session?.user;
   const [associateName, setAssociateName] = useState('');
-
+  const [noti,setNoti]=useState()
+  const renderNoti = () => {
+    if (noti) {
+      return (
+        <div className="fixed bottom-4 left-4">
+          <SucessMessage message={noti} onClose={() => setNoti(null)} />
+        </div>
+      );
+    }
+  };
   const addMember = async (associateName) => {
     const addMemberMutation = `
       mutation AddAssociate($email: String!, $associateName: String!) {
@@ -91,14 +100,16 @@ export default function AddMember() {
       const { data, errors } = await res.json();
       
       if (errors) {
+        setNoti('Error Adding Associate')
         console.error('Error Adding Associate:', errors);
+      }
+      if(data){
+        setNoti("Associate Added")       
       }
     } catch (error) {
       console.error('Unknown Error:', error.message);
     }
   };
-
-  
 
   const handleAssociateChange = (e) => {
     setAssociateName(e.target.value);
@@ -131,6 +142,9 @@ export default function AddMember() {
                 Add Associate
               </button>
       </form>
+      {
+        renderNoti()
+      }
     </>
   );
 }

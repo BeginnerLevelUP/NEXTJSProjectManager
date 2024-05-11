@@ -1,4 +1,5 @@
 "use client"
+import SucessMessage from "../components/sucessMessage";
 import Nav from "../components/nav";
 import { useSession } from "next-auth/react";
 import { useEffect,useState } from "react";
@@ -9,7 +10,7 @@ import { Fragment } from "react";
 import { Combobox, Transition,Dialog,Listbox} from "@headlessui/react";
 import { Textarea } from "@material-tailwind/react";
 const page = () => {
-
+  const [noti,setNoti]=useState()
   const router = useRouter()
   const { data: session } = useSession();
   const user = session?.user;
@@ -18,7 +19,15 @@ const page = () => {
   const [projectName,setProjectName]=useState('')
   const [projectDescription,setProjectDescription]=useState('')
   const [currentProjectId,setProjectId]=useState()
-  
+    const renderNoti = () => {
+    if (noti) {
+      return (
+        <div className="fixed bottom-4 left-4">
+          <SucessMessage message={noti} onClose={() => setNoti(null)} />
+        </div>
+      );
+    }
+  };
     function closeModal() {
     setIsOpen(!isOpen)
 
@@ -102,6 +111,7 @@ const page = () => {
       const { data, errors } = await res.json();
 
       if (errors) {
+     
         console.error("Error Fetching User Projects:", errors);
         return null;
       }
@@ -137,11 +147,12 @@ const delteUserProject = async (deleteProjectId) => {
     const { data, errors } = await res.json();
 
     if (errors) {
+      setNoti("Error Deleting Project")
       console.error("Error Deleting Project:", errors);
       return;
     }
     if(data){
-    // Remove the deleted project from userData state
+     setNoti("Project Removed")
     setUserData((prevUserData) => ({
       ...prevUserData,
       projects: prevUserData.projects.filter(
@@ -241,12 +252,13 @@ const delteUserProject = async (deleteProjectId) => {
       const { data, errors } = await res.json();
 
       if (errors) {
+        setNoti("Error Editing Projects")
         console.error("Error Editing Projects:", errors);
         return null;
       }
 
       if(data){
-        // Update the edited project in the userData state
+    setNoti('Project Added')
     setUserData((prevUserData) => ({
       ...prevUserData,
       projects: prevUserData.projects.map((project) =>
@@ -314,7 +326,9 @@ useEffect(() => {
 
 
   return (
-    <>
+    <>       {
+        renderNoti()
+      }
     <Nav></Nav>
      <div className="text-center">
   <Transition appear show={isOpen} as={Fragment}>

@@ -1,15 +1,25 @@
 "use client"
+import SucessMessage from '../components/sucessMessage';
 import Nav from '../components/nav';
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import DotLoader from "react-spinners/DotLoader";
 import { useRouter } from 'next/navigation';
 const Page = () => {
+  const [noti,setNoti]=useState()
   const router=useRouter()
   const { data: session } = useSession();
   const user = session?.user;
-  const [userData, setUserData] = useState();
-
+  const [userData, setUserData] = useState([]);
+  const renderNoti = () => {
+    if (noti) {
+      return (
+        <div className="fixed bottom-4 left-4">
+          <SucessMessage message={noti} onClose={() => setNoti(null)} />
+        </div>
+      );
+    }
+  };
   const fetchUserAssociates = async () => {
     const userQuery = `
       query User($userId: ID!) {
@@ -42,13 +52,14 @@ const Page = () => {
       const { data, errors } = await res.json();
 
       if (errors) {
-        console.error("Error Fetching User Projects:", errors);
+     
+        console.error("Error Fetch Associate Data:", errors);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error("Error Fetching User Projects:", error.message);
+      console.error("Error Fetch Associate Data:", error.message);
       return null;
     }
   };
@@ -133,22 +144,22 @@ const Page = () => {
       const { data, errors } = await res.json();
 
       if (errors) {
-        console.error("Error Fetching User Projects:", errors);
+        setNoti('Error Removing Associate')
+        console.error("Error Removing Associate':", errors);
         return null;
       }
-    if (data && data.removeAssociate) {
-      // Update state with the removed associate in user's associates array
-      setUserData((prevUserData) => ({
-        ...prevUserData,
-        associates: prevUserData.associates?.filter(
-          (associate) => associate._id !== associateId
-        ),
-      }));
-    }
+if (data && data.removeAssociate) {
+  // Update state with the removed associate removed from user's associates array
+  setUserData(prevUserData =>
+    prevUserData.filter(associate => associate._id !== associateId)
+  );
+setNoti('Associate Removed')
+}
+
 
       return data;
     } catch (error) {
-      console.error("Error Fetching User Projects:", error.message);
+      console.error("Error Removing Associate':", error.message);
       return null;
     }
   }
@@ -164,15 +175,18 @@ const Page = () => {
 
     fetchData();
   }, [user?.email]);
-
+console.log(userData)
   return (
     <>
+      {
+        renderNoti()
+      }
       <Nav />
       <section>
         <div className="mx-auto w-full max-w-5xl px-5 py-16 md:px-10 md:py-24 lg:py-32">
           <h2 className="text-center text-3xl font-bold md:text-5xl">View and Manage Team</h2>
           <ul className="mx-auto grid lg:gap-4 sm:grid-cols-2 md:grid-cols-3 max-w-lg md:max-w-5xl">
-            {userData?.length>0 ? (
+            {userData.length ? (
               userData?.map((data) => (
                 <li key={data._id} className="mx-auto flex max-w-xs flex-col items-center gap-4 py-6 md:py-4 text-center">
                   <img src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt="" className="mb-4 inline-block h-40 w-40 rounded-full object-cover" />

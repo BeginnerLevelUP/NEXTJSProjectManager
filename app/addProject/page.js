@@ -1,14 +1,24 @@
 'use client'
+import SucessMessage from "../components/sucessMessage";
 import Nav from "../components/nav";
 import { useState,useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Textarea } from "@material-tailwind/react";
 export default function  AddProjects() {
-   const {data:session}=useSession()
-   const user = session?.user;
-  const [projectName,setProjectName]=useState('')
-  const [projectDescription,setProjectDescription]=useState('')
-
+  const [noti,setNoti]=useState()
+  const {data:session}=useSession()
+  const user = session?.user;
+  const [projectName,setProjectName]=useState()
+  const [projectDescription,setProjectDescription]=useState()
+  const renderNoti = () => {
+    if (noti) {
+      return (
+        <div className="fixed bottom-4 left-4">
+          <SucessMessage message={noti} onClose={() => setNoti(null)} />
+        </div>
+      );
+    }
+  };
   const createProject=async(userId,name,description)=>{
     const createProjectMutation=`mutation CreateProject($name: String!, $description: String!, $userId: ID!) {
   createProject(name: $name, description: $description, userId: $userId) {
@@ -43,8 +53,12 @@ export default function  AddProjects() {
       const { data, errors } = await res.json();
 
     if (errors) {
+      setNoti('Error Adding Project')
       console.error('Error Creating Project:', errors);
-		} 
+		}
+    if(data){
+        setNoti("Project Added")       
+      }
   }catch (err) {
 		console.log(err instanceof Error ? err.message : 'unknow error')
 		}
@@ -102,6 +116,9 @@ export default function  AddProjects() {
                 Create Project
               </button>
       </form>
+          {
+        renderNoti()
+      }
 </>
 
   
