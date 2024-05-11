@@ -113,96 +113,48 @@ const page = () => {
     }
   };
 
-  const delteUserProject=async(deleteProjectId)=>{
-    const deleteQuery=`mutation DeleteProject($deleteProjectId: ID!) {
-  deleteProject(id: $deleteProjectId) {
-    _id
-    dateCreated
-    dateUpdated
-    name
-    description
-    completed
-    gitRepoUrl
-    deployedSite
-    comments {
+const delteUserProject = async (deleteProjectId) => {
+  const deleteQuery = `mutation DeleteProject($deleteProjectId: ID!) {
+    deleteProject(id: $deleteProjectId) {
       _id
-      text
-      user {
-        _id
-        username
-        email
-        password
-      }
-      createdAt
-      replies {
-        _id
-        text
-        createdAt
-      }
     }
-    tasks {
-      _id
-      name
-      description
-      status
-      dueDate
-      assignedTo {
-        _id
-        username
-        email
-        password
-      }
-      ranking
-      createdAt
-    }
-    members {
-      _id
-      username
-      email
-      password
-      associates {
-        _id
-        username
-        email
-        password
-      }
-      projects {
-        _id
-        dateCreated
-        dateUpdated
-        name
-        description
-        completed
-        gitRepoUrl
-        deployedSite
-      }
-    }
-  }
-}`
-    try{
-const res = await fetch("http://localhost:3000/api/graphql", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+  }`;
+
+  try {
+    const res = await fetch("http://localhost:3000/api/graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: deleteQuery,
+        variables: {
+          deleteProjectId,
         },
-        body: JSON.stringify({
-          query: deleteQuery,
-          variables: {
-           deleteProjectId
-          },
-        }),
-      });
+      }),
+    });
 
-      const { data, errors } = await res.json();
+    const { data, errors } = await res.json();
 
-      if (errors) {
-        console.error("Error Fetching User Projects:", errors);
-        return null;
-      }
-    }catch{
-      console.log('Eror Deleteing Project',e instanceof Error ? e.message : "unknown Error")
+    if (errors) {
+      console.error("Error Deleting Project:", errors);
+      return;
     }
+    if(data){
+    // Remove the deleted project from userData state
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      projects: prevUserData.projects.filter(
+        (project) => project._id !== deleteProjectId
+      ),
+    }));
+    }
+
+  } catch (error) {
+    console.error("Error Deleting Project:", error.message);
   }
+};
+
   const editUserProject=async(updateProjectId,name,description,completed)=>{
   const  editMutation=`mutation UpdateProject($updateProjectId: ID!, $name: String, $description: String,$completed: Boolean) {
   updateProject(id: $updateProjectId, name: $name, description: $description,completed: $completed) {
@@ -293,6 +245,18 @@ const res = await fetch("http://localhost:3000/api/graphql", {
         return null;
       }
 
+      if(data){
+        // Update the edited project in the userData state
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      projects: prevUserData.projects.map((project) =>
+        project._id === updateProjectId
+          ? { ...project, name, description, completed }
+          : project
+      ),
+    }));
+      }
+
     } catch (error) {
       console.error("Error Editing Projects:", error.message);
       return null;
@@ -307,18 +271,20 @@ const res = await fetch("http://localhost:3000/api/graphql", {
     setProjectDescription(e.target.value)
   }
     const handleSubmit=async(e)=>{
+         const project = userData.projects.find(project => project._id === currentProjectId);
     e.preventDefault()
-   await editUserProject(currentProjectId,projectName,projectDescription)
+   await editUserProject(currentProjectId,projectName||project.name,projectDescription||project.description)
     setProjectName('');
     setProjectDescription('');
      setProjectId('')
+     setIsOpen(false)
   }
 
 useEffect(() => {
   const fetchData = async () => {
     const data = await fetchUserProjects();
     if (data) {
-      setUserData(data);
+      setUserData(data?.user);
     }
   };
 
@@ -326,15 +292,17 @@ useEffect(() => {
 }, [user?.email]);
 
 useEffect(() => {
-  console.log(userData);
+  console.log(userData?.projects);
   if (userData) {
     userData?.projects?.forEach(async (currentProject) => {
+      if(currentProject.task>0){
       if (currentProject.tasks.filter((task) => task.status === "Completed").length === currentProject.tasks.length) {
-        // await editUserProject(currentProject._id, currentProject.name, currentProject.description, true);
-        console.log('yes');
+        await editUserProject(currentProject._id, currentProject.name, currentProject.description, true);
       } else {
-        console.log('no');
+         await editUserProject(currentProject._id, currentProject.name, currentProject.description, false);
       }
+      }
+
     });
   }
 }, [userData]);
@@ -432,7 +400,7 @@ useEffect(() => {
           <div className="gap-x-8 [column-count:1] md:grid-cols-2 md:gap-x-4 md:[column-count:1] ">
             {/* Render projects if userData exists, otherwise render loading or message */}
             {userData ? (
-              userData.user.projects.map((project) => (
+              userData?.projects.map((project) => (
 
                 <>
       

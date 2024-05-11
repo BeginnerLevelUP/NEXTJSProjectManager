@@ -133,7 +133,8 @@ addAssociate: async (_, { email, associateName }) => {
     }
 
     // Find the associate by username
-    const associate = await User.findOne({ username: associateName });
+const associate = await User.findOne({ $or: [{ username: associateName }, { email: associateName }] });
+
     if (!associate) {
       throw new Error('Associate not found');
     }
@@ -154,7 +155,7 @@ addAssociate: async (_, { email, associateName }) => {
     removeAssociate: async (_, { _id, associateId }) => {
       try {
         // Find the user by _id
-        const user = await User.findById(_id);
+        const user = await User.findOne({email:_id});
         if (!user) {
           throw new Error('User not found');
         }
@@ -170,7 +171,7 @@ addAssociate: async (_, { email, associateName }) => {
         await user.save();
 
         // Fetch the updated user
-        const updatedUser = await User.findById(_id);
+        const updatedUser = await User.findOne({email:_id});
 
         return updatedUser; // Return the updated user
       } catch (e) {

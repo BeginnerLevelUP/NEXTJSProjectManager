@@ -143,14 +143,7 @@ query User($userId: ID!) {
     }
   };
 
-  const createTask=async(
-    projectId,
-      name,
-      description,
-      dueDate,
-      assignedTo,
-      status,
-      ranking,)=>{
+  const createTask=async(update)=>{
     const taskMutation=`
     mutation Mutation($name: String!, $description: String!, $projectId: ID!, $dueDate: String, $assignedTo: [ID], $ranking: String, $status: String) {
   createTask(name: $name, description: $description, projectId: $projectId, dueDate: $dueDate, assignedTo: $assignedTo, ranking: $ranking, status: $status) {
@@ -227,14 +220,8 @@ query User($userId: ID!) {
 
   body: JSON.stringify({
     query:taskMutation,
-     variables:{
-      projectId,
-      name,
-      description,
-      dueDate,
-      assignedTo,
-      ranking
-    }
+     variables:update
+    
   })
         }
 			);    
@@ -243,6 +230,15 @@ query User($userId: ID!) {
     if (errors) {
       console.error('Error Creating Project:', errors);
 		} 
+    if (data && data.createTask) {
+      // Update state with the newly created task
+      const newTask = data.createTask;
+      setCurrentProject((prevProject) => ({
+        ...prevProject,
+        tasks: [...prevProject.tasks, newTask],
+      }));
+      setIsOpen({open:false,custom:''})
+    }
   }catch (err) {
 		console.log(err instanceof Error ? err.message : 'unknow error')
 		}
@@ -334,7 +330,16 @@ query User($userId: ID!) {
         return null;
       }
 
-      return data;
+   if (data && data.deleteTask) {
+      // Filter out the deleted task from the state
+      const updatedTasks = currentProject.tasks.filter(
+        (task) => task._id !== deleteTaskId
+      );
+      setCurrentProject((prevProject) => ({
+        ...prevProject,
+        tasks: updatedTasks,
+      }));
+    }
     } catch (error) {
       console.error("Error Fetching User Projects:", error.message);
       return null;
@@ -425,7 +430,18 @@ query User($userId: ID!) {
         console.error("Error Fetching User Projects:", errors);
         return null;
       }
-
+      
+          if (data && data.updateTask) {
+      // Update state with the updated task
+      const updatedTask = data.updateTask;
+      setCurrentProject((prevProject) => ({
+        ...prevProject,
+        tasks: prevProject.tasks.map((task) =>
+          task._id === updatedTask._id ? updatedTask : task
+        ),
+      }));
+       setIsOpen({open:false,custom:''})
+    }
       return data;
     } catch (error) {
       console.error("Error Fetching User Projects:", error.message);
@@ -520,6 +536,19 @@ query: memberMutation,
         console.error("Error Fetching User Projects:", errors);
         return null;
       }
+if (data && data.updateProject) {
+  // Combine current members with new members, filtering out duplicates
+  setCurrentProject((prevProject) => ({
+    ...prevProject,
+    members: [
+      ...prevProject.members,
+      ...data.updateProject.members.filter((newMember) => (
+        !prevProject.members.some((currentMember) => currentMember?._id === newMember?._id)
+      )),
+    ],
+  }));
+  setIsOpen({ open: false, custom: '' });
+}
 
       return data;
     } catch (error) {
@@ -527,6 +556,7 @@ query: memberMutation,
       return null;
     }
   }
+
 useEffect(() => {
   const fetchData = async () => {
     const data = await fetchUserAssociates();
@@ -922,9 +952,25 @@ addMembersToProject(currentProject._id, updatedMembers);
             <button 
             onClick={
               isOpen.custom==='edit' ?
-                ()=>{updateTask({taskId:currentTaskId,date:date||null,assignedTo:selected?._id||null,ranking:selectedLabel?.label||null,name:taskName,description:taskDescription})}
+                ()=>{
+                 const task = currentProject?.tasks?.find(task => task._id === currentTaskId);
+                  updateTask(
+                  {taskId:currentTaskId,
+                    date:date||task.date,
+                    assignedTo:selected?._id || task.assignedTo,
+                    ranking:selectedLabel?.label||task.ranking
+                    ,name:taskName||task.name,
+                    description:taskDescription||task.description})
+                }
               :
-             ()=>{createTask(currentProject._id,taskName,taskDescription,date||null,selected?._id||null,selectedLabel?.label||null)}
+             ()=>{
+              createTask(
+                    {projectId:currentProject._id,
+                    date:date||null,
+                    assignedTo:selected?._id||null,
+                    ranking:selectedLabel?.label||null
+                    ,name:taskName,
+                    description:taskDescription}  )}
             }
               type="button"
               className="w-full rounded bg-primary px-6 py-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"

@@ -98,6 +98,8 @@ export default function AddMember() {
     }
   };
 
+  
+
   const handleAssociateChange = (e) => {
     setAssociateName(e.target.value);
   };
