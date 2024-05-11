@@ -1,4 +1,4 @@
-import { Schema, model,models } from "mongoose";
+import { Schema, model, models } from "mongoose";
 
 const taskSchema = new Schema({
     name: {
@@ -15,8 +15,8 @@ const taskSchema = new Schema({
         default: 'Pending'
     },
     dueDate: {
-        type: Date,
-        default:Date.now()
+        type: String,
+        default:"No Due Date"
     },
     assignedTo: [{
         type: Schema.Types.ObjectId,
@@ -29,14 +29,10 @@ const taskSchema = new Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now()
+        default: () => new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short' })
     }
 });
 
-const Task =  models.Task || model('Task', taskSchema);
+const Task = models.Task || model('Task', taskSchema);
 
 export default Task;
-
-// later can a pre that checks the current date compared to the due date and if its withing a week 
-// mark as important but if on the same day mark detrimental
-

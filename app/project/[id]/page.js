@@ -589,7 +589,7 @@ useEffect(() => {
   fetchData();
 }, [user?.email, params.id]);
 
-
+console.log(date)
         
 function handleTaskModal(edit, task) {
   setIsOpen((prevOpenState) => ({
@@ -974,7 +974,7 @@ addMembersToProject(currentProject._id, updatedMembers);
                  const task = currentProject?.tasks?.find(task => task._id === currentTaskId);
                   updateTask(
                   {taskId:currentTaskId,
-                    date:date||task.date,
+                    dueDate:date||task.date,
                     assignedTo:selected?._id || task.assignedTo,
                     ranking:selectedLabel?.label||task.ranking
                     ,name:taskName||task.name,
@@ -984,7 +984,7 @@ addMembersToProject(currentProject._id, updatedMembers);
              ()=>{
               createTask(
                     {projectId:currentProject._id,
-                    date:date||null,
+                    dueDate:date||null,
                     assignedTo:selected?._id||null,
                     ranking:selectedLabel?.label||null
                     ,name:taskName,
@@ -1105,13 +1105,21 @@ addMembersToProject(currentProject._id, updatedMembers);
                       <div className="text-sm text-gray-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill={`${labelOptions.find((label) => label.label === task.ranking)?.svg}`}className={`text-gray-800 inline align-middle mr-1`} viewBox="0 0 16 16">
                           <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                        </svg>{task.ranking}
-
+                        </svg>{task.ranking} 
                       </div>
+    <div className="text-sm">
+<div className={new Date() > new Date(task.dueDate) ? "text-red-600" : "text-gray-600"}>
+  <p>
+   Due : {new Date(task.dueDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
+    {new Date() > new Date(task.dueDate) && " - Overdue"}
+  </p>
+</div>
+
+    </div>
                       <div className="text-sm text-gray-600">
                         <p>{task.description}</p>
-
                       </div>
+
 <Menu>
   <div className="flex justify-evenly">
       <Menu.Button className="inline-flex w-full justify-center rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-black hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
