@@ -100,7 +100,7 @@ export default function Home() {
     `;
 
     try {
-      const res = await fetch("http://localhost:3000/api/graphql", {
+      const res = await fetch(`${process.env.NEXTAUTH_URL||'http://localhost:3000'}/api/graphql`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
