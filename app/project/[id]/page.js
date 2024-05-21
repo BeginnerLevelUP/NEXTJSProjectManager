@@ -223,7 +223,7 @@ query User($userId: ID!) {
     `
  try {
 			const res = await fetch(
-				`process.env.NEXTAUTH_URL/api/graphql`,{
+			`${process.env.NEXTAUTH_URL||'http://localhost:3000'}/api/graphql`,{
           method:"POST",
             headers: {
     "Content-Type": "application/json"
