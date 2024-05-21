@@ -17,7 +17,7 @@ function LoginForm() {
   const tasks= useSelector(({projects}) => projects.tasks)
   const {data:session}=useSession()
   const [providers,setProviders]=useState(null)
-
+  const videoSrc="/signOnVideo.mp4"
   const router = useRouter()
   const introDiv=useRef(null)
   const demo=useRef(null)
@@ -498,12 +498,13 @@ Object.values(providers).map((provider) => {
    data-scroll  data-scroll-speed=".5">
   No Cookie Cutter Templates
 </div>
-
+  
 <section className=' m-auto container flex-center' ref={demo} >
-            <video   src={"/signOnVideo.mp4"} autoPlay loop muted style={{ width: "12000px" }}>
-                <source src="../signOnVideo.mp4" type="video/mp4" />
+          <video  autoPlay loop muted style={{ width: "12000px" }}>
+                <source src={require('../../public/signOnVideo.mp4')}  type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
+  
 </section>
 
 </main>
