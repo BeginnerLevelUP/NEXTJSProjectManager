@@ -312,9 +312,10 @@ Object.values(providers).map((provider) => {
       return (
   <a href="#!" role="button"
                   className="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500"
-                  onClick={() => 
+                  onClick={(e) => {
+                e.preventDefault()
                signIn(provider.id) 
-              
+                  }
               }>
                    {/* <!---- Github --> */}
                   <span className="[&>svg]:mx-4 [&>svg]:h-4 [&>svg]:w-4">
@@ -333,9 +334,9 @@ Object.values(providers).map((provider) => {
 
            <a href="#!" role="button"
                   className="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500"
-                  onClick={() => {
-               signIn(provider.id)
-
+                  onClick={(e) => {
+                e.preventDefault()
+               signIn(provider.id) 
                   }
               }>
                    {/* <!---- Google --> */}
@@ -351,8 +352,11 @@ Object.values(providers).map((provider) => {
       return(
   <a href="#!" role="button"
                   className="action:text-primary-700 dark:action:text-primary-600 text-primary transition duration-200 ease-in-out hover:text-primary-600 focus:text-primary-600 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500"
-                  onClick={() => 
+                  onClick={(e) => 
+              {
+                e.preventDefault()
                signIn(provider.id) 
+                  } 
               }>
                    {/* <!---- LinkenIn --> */}
                   <span className="[&>svg]:mx-4 [&>svg]:h-4 [&>svg]:w-4">
