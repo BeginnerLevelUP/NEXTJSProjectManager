@@ -9,7 +9,7 @@ Simply Go to the [Deployed Website](https://nextjs-project-manager-wheat.vercel.
 * Create Projects 
 * Add members to Project 
 * Assign Tasks and rank based on importance
-* 
+  
 
 ## ShowCase
 
