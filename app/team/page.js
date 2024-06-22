@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import DotLoader from "react-spinners/DotLoader";
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 const Page = () => {
   const [noti,setNoti]=useState()
   const router=useRouter()
@@ -20,49 +21,7 @@ const Page = () => {
       );
     }
   };
-  const fetchUserAssociates = async () => {
-    const userQuery = `
-      query User($userId: ID!) {
-        user(id: $userId) {
-          _id
-          associates {
-            _id
-            username
-            email
-            password
-          }
-        }
-      }
-    `;
 
-    try {
-      const res = await fetch(`${process.env.NEXTAUTH_URL||'http://localhost:3000'}/api/graphql`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: userQuery,
-          variables: {
-            userId: user?.email,
-          },
-        }),
-      });
-
-      const { data, errors } = await res.json();
-
-      if (errors) {
-     
-        console.error("Error Fetch Associate Data:", errors);
-        return null;
-      }
-
-      return data;
-    } catch (error) {
-      console.error("Error Fetch Associate Data:", error.message);
-      return null;
-    }
-  };
 
   const removeUserAssociate=async(associateId)=>{
    const removeQuery=`mutation RemoveAssociate($id: ID!, $associateId: ID!) {
@@ -166,6 +125,49 @@ setNoti('Associate Removed')
   
 
   useEffect(() => {
+      const fetchUserAssociates = async () => {
+    const userQuery = `
+      query User($userId: ID!) {
+        user(id: $userId) {
+          _id
+          associates {
+            _id
+            username
+            email
+            password
+          }
+        }
+      }
+    `;
+
+    try {
+      const res = await fetch(`${process.env.NEXTAUTH_URL||'http://localhost:3000'}/api/graphql`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: userQuery,
+          variables: {
+            userId: user?.email,
+          },
+        }),
+      });
+
+      const { data, errors } = await res.json();
+
+      if (errors) {
+     
+        console.error("Error Fetch Associate Data:", errors);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error Fetch Associate Data:", error.message);
+      return null;
+    }
+  };
     const fetchData = async () => {
       const data = await fetchUserAssociates();
       if (data) {
@@ -189,7 +191,7 @@ console.log(userData)
             {userData.length ? (
               userData?.map((data) => (
                 <li key={data._id} className="mx-auto flex max-w-xs flex-col items-center gap-4 py-6 md:py-4 text-center">
-                  <img src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt="" className="mb-4 inline-block h-40 w-40 rounded-full object-cover" />
+                  <Image src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt="" className="mb-4 inline-block h-40 w-40 rounded-full object-cover" />
                   <p className="font-bold">{data?.username}</p>
                   <p className="text-sm text-[#636262]">{data?.email}</p>
                   <div className="mt-4 flex flex-wrap">

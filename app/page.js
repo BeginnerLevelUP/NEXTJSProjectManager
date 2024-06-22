@@ -4,6 +4,7 @@ import { useState,useEffect } from "react";
 import { useSession } from "next-auth/react";
 import SucessMessage from "./components/sucessMessage";
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 import {
   Collapse,
   Card,
@@ -12,6 +13,7 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
+import Image from "next/image";
 import { DotLoader } from "react-spinners";
 export default function Home() {
   const router=useRouter()
@@ -34,73 +36,75 @@ export default function Home() {
       );
     }
   };
-    const fetchUser = async () => {
-    const userQuery = `
-     query Query($userId: ID!) {
-  user(id: $userId) {
-    _id
-    username
-    email
-    password
-    associates {
-      _id
-      username
-      email
-      password
-    }
-    projects {
-      _id
-      dateCreated
-      dateUpdated
-      name
-      description
-      completed
-      gitRepoUrl
-      deployedSite
-      comments {
-        _id
-        text
-        user {
-          _id
-          username
-          email
-          password
-        }
-        createdAt
-        replies {
-          _id
-          text
-          createdAt
-        }
-      }
-      tasks {
-        _id
-        name
-        description
-        status
-        dueDate
-        assignedTo {
-          _id
-          username
-          email
-          password
-        }
-        ranking
-        createdAt
-      }
-      members {
+ const fetchUser = useCallback(async () => {
+  const userQuery = `
+    query Query($userId: ID!) {
+      user(id: $userId) {
         _id
         username
         email
         password
+        associates {
+          _id
+          username
+          email
+          password
+        }
+        projects {
+          _id
+          dateCreated
+          dateUpdated
+          name
+          description
+          completed
+          gitRepoUrl
+          deployedSite
+          comments {
+            _id
+            text
+            user {
+              _id
+              username
+              email
+              password
+            }
+            createdAt
+            replies {
+              _id
+              text
+              createdAt
+            }
+          }
+          tasks {
+            _id
+            name
+            description
+            status
+            dueDate
+            assignedTo {
+              _id
+              username
+              email
+              password
+            }
+            ranking
+            createdAt
+          }
+          members {
+            _id
+            username
+            email
+            password
+          }
+        }
       }
     }
-  }
-}
-    `;
+  `;
 
-    try {
-      const res = await fetch(`${process.env.NEXTAUTH_URL||'http://localhost:3000'}/api/graphql`, {
+  try {
+    const res = await fetch(
+      `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/api/graphql`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -108,40 +112,40 @@ export default function Home() {
         body: JSON.stringify({
           query: userQuery,
           variables: {
-          userId,
+            userId,
           },
         }),
-      });
-
-      const { data, errors } = await res.json();
-
-      if (errors) {
-     
-        console.error("Error Fetch Associate Data:", errors);
-        return null;
       }
+    );
 
-      return data;
-    } catch (error) {
-      console.error("Error Fetch Associate Data:", error.message);
+    const { data, errors } = await res.json();
+
+    if (errors) {
+      console.error("Error Fetch Associate Data:", errors);
       return null;
     }
-  };
+
+    return data;
+  } catch (error) {
+    console.error("Error Fetch Associate Data:", error.message);
+    return null;
+  }
+}, [userId]);
     const labelOptions = [
     { label: 'Regular', property: 'regular', color: 'bg-green-500',svg:'green' },
     { label: 'Important', property: 'important', color: 'bg-blue-500' ,svg:'blue' },
     { label: 'Detrimental', property: 'detrimental', color: 'bg-red-500', svg:'red' }
   ];
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchUser();
-      if (data) {
-        setUserData(data.user);
-      }
-    };
+useEffect(() => {
+  const fetchData = async () => {
+    const data = await fetchUser();
+    if (data) {
+      setUserData(data.user);
+    }
+  };
 
-    fetchData();
-  }, [userId]);
+  fetchData();
+}, [fetchUser]);
 
   return (
 <>
@@ -226,59 +230,68 @@ export default function Home() {
 <div className="grid grid-cols-5 gap-4 text-center px-auto ">
 <div className="space-x-5 col-span-4 ">
     <h2 className="text-2xl font-bold mb-4 my-auto ">Current Projects</h2>
-    <div className="grid grid-cols-6 ">
-      {
-        user?(
-          user?.projects?.map((project,index)=>(
-    <Card className={`col-span-${expand === index ? '4' : '2'} m-8`}>
-      <CardBody>
-        <div className="flex justify-between">
-        <Typography variant="h5" color="blue-gray" className="mb-2">
-          {project.name}
-        </Typography>
-<svg onClick={() => handleExpand(index)} className="-rotate-90 w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25" />
-</svg>
-        </div>
-        <Typography>
-{expand === index && project.description}
-        </Typography>
-
-{expand === index ? (
-  <div className="flex space-x-2">
-    {project.members.length > 0 ? (
-      project.members.map((mem, i) => (
-        <img
-          key={i}
-          className="object-cover w-8 h-8 rounded-full"
-          src={mem.avatarUrl ? mem.avatarUrl : 'https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844'}
-          alt={`avatar${i+1}`}
-        />
-      ))
-    ) : (
-      <p>No Members</p>
-    )}
-  </div>
-) : null}
-
-      
-      </CardBody>
-      <CardFooter className="pt-0">
-        <Button className="bg-black" onClick={()=>{router.push(`/project/${project._id}`)}}>View Project</Button>
-      </CardFooter>
-    </Card>
-          )
-
-          )
-        ):(
-          <>
-          <DotLoader size={100}></DotLoader>
-          </>
-        )
-      }
-
-
-    </div>
+<div className="grid grid-cols-6 ">
+  {user ? (
+    user.projects.map((project, index) => (
+      <Card key={project._id} className={`col-span-${expand === index ? '4' : '2'} m-8`}>
+        <CardBody>
+          <div className="flex justify-between">
+            <Typography variant="h5" color="blue-gray" className="mb-2">
+              {project.name}
+            </Typography>
+            <svg
+              onClick={() => handleExpand(index)}
+              className={`transform ${expand === index ? 'rotate-0' : '-rotate-90'} w-6 h-6`}
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25"
+              />
+            </svg>
+          </div>
+          <Typography>
+            {expand === index && project.description}
+          </Typography>
+          {expand === index && (
+            <div className="flex space-x-2">
+              {project.members.length > 0 ? (
+                project.members.map((mem, i) => (
+                  <Image
+                    key={i}
+                    className="object-cover w-8 h-8 rounded-full"
+                    src={
+                      mem.avatarUrl
+                        ? mem.avatarUrl
+                        : 'https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844'
+                    }
+                    alt={`avatar${i + 1}`}
+                    width={32}
+                    height={32}
+                  />
+                ))
+              ) : (
+                <p>No Members</p>
+              )}
+            </div>
+          )}
+        </CardBody>
+        <CardFooter className="pt-0">
+          <Button className="bg-black" onClick={() => router.push(`/project/${project._id}`)}>
+            View Project
+          </Button>
+        </CardFooter>
+      </Card>
+    ))
+  ) : (
+    <DotLoader size={100} />
+  )}
+</div>
 
   </div> 
 
@@ -288,7 +301,7 @@ export default function Home() {
       {user?.associates?.map(( associate , index) => (
         <>
       
-    <img onClick={()=>{router.push(`/profile/${associate?.email}`)}} src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt={associate.username} className="mb-4 inline-block h-40 w-40 rounded-full object-cover" />
+    <Image onClick={()=>{router.push(`/profile/${associate?.email}`)}} src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt={associate.username} className="mb-4 inline-block h-40 w-40 rounded-full object-cover" />
        
       
         </>

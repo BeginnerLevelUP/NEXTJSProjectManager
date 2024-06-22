@@ -14,8 +14,8 @@ import { Combobox, Transition,Dialog,Listbox,Menu} from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import DotLoader from "react-spinners/DotLoader";
 import { useSession } from "next-auth/react";
-
-const projectPage = ({ params }) => {
+import Image from "next/image"; 
+const ProjectPage = ({ params }) => {
   const [noti,setNoti]=useState()
   const [taskName,setProjectName]=useState('')
   const [taskDescription,setProjectDescription]=useState('')
@@ -61,98 +61,7 @@ const [selectedLabel, setSelectedLabel] = useState(null);
     setProjectDescription(e.target.value)
   }
 
-  const fetchUserAssociates = async () => {
-    const userQuery = `
-query User($userId: ID!) {
-  user(id: $userId) {
-    _id
-    username
-    email
-    password
-    associates {
-      _id
-      username
-      email
-      password
-    }
-    projects {
-      _id
-      dateCreated
-      dateUpdated
-      name
-      description
-      completed
-      gitRepoUrl
-      deployedSite
-      comments {
-        _id
-        text
-        user {
-          _id
-          username
-          email
-          password
-        }
-        createdAt
-        replies {
-          _id
-          text
-          createdAt
-        }
-      }
-      tasks {
-        _id
-        name
-        description
-        status
-        dueDate
-        assignedTo {
-          _id
-          username
-          email
-          password
-        }
-        ranking
-        createdAt
-      }
-      members {
-        _id
-        username
-        email
-        password
-      }
-    }
-  }
-}
-    `;
 
-    try {
-      const res = await fetch(`${process.env.NEXTAUTH_URL||'http://localhost:3000'}/api/graphql`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: userQuery,
-          variables: {
-            userId: user?.email,
-          },
-        }),
-      });
-
-      const { data, errors } = await res.json();
-
-      if (errors) {
-        console.error("Error Fetching User Projects:", errors);
-        return null;
-      }
-
-      return data;
-    } catch (error) {
-      console.error("Error Fetching User Projects:", error.message);
-      return null;
-    }
-  };
 
   const createTask=async(update)=>{
     const taskMutation=`
@@ -573,6 +482,98 @@ if (data && data.updateProject) {
   }
 
 useEffect(() => {
+    const fetchUserAssociates = async () => {
+    const userQuery = `
+query User($userId: ID!) {
+  user(id: $userId) {
+    _id
+    username
+    email
+    password
+    associates {
+      _id
+      username
+      email
+      password
+    }
+    projects {
+      _id
+      dateCreated
+      dateUpdated
+      name
+      description
+      completed
+      gitRepoUrl
+      deployedSite
+      comments {
+        _id
+        text
+        user {
+          _id
+          username
+          email
+          password
+        }
+        createdAt
+        replies {
+          _id
+          text
+          createdAt
+        }
+      }
+      tasks {
+        _id
+        name
+        description
+        status
+        dueDate
+        assignedTo {
+          _id
+          username
+          email
+          password
+        }
+        ranking
+        createdAt
+      }
+      members {
+        _id
+        username
+        email
+        password
+      }
+    }
+  }
+}
+    `;
+
+    try {
+      const res = await fetch(`${process.env.NEXTAUTH_URL||'http://localhost:3000'}/api/graphql`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: userQuery,
+          variables: {
+            userId: user?.email,
+          },
+        }),
+      });
+
+      const { data, errors } = await res.json();
+
+      if (errors) {
+        console.error("Error Fetching User Projects:", errors);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error Fetching User Projects:", error.message);
+      return null;
+    }
+  };
   const fetchData = async () => {
     const data = await fetchUserAssociates();
     if (data) {
@@ -587,9 +588,9 @@ useEffect(() => {
   };
 
   fetchData();
-}, [user?.email, params.id]);
+}, [user?.email,params?.id]);
 
-console.log(date)
+
         
 function handleTaskModal(edit, task) {
   setIsOpen((prevOpenState) => ({
@@ -1027,7 +1028,7 @@ addMembersToProject(currentProject._id, updatedMembers);
  {currentProject?.members && currentProject.members.length > 0 ? (
   currentProject.members.map(ass => (
     <div key={ass?._id} className="h-9 w-9">
-      <img className="object-cover w-full h-full rounded-full"  src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt="avatar1" />
+      <Image className="object-cover w-full h-full rounded-full"  src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt="avatar1" />
     </div>
   ))
 ) : (
@@ -1096,7 +1097,7 @@ addMembersToProject(currentProject._id, updatedMembers);
                     {
                       currentProject.tasks.length>0 ?(
                         currentProject?.tasks.map((task,index)=>(
-                    <div className="p-4 bg-white border rounded-xl text-gray-800 space-y-2">
+                    <div key={task._id} className="p-4 bg-white border rounded-xl text-gray-800 space-y-2">
                       <div className="flex justify-between">
                         <div className="text-gray-400 text-xs">Task {index+1}</div>
                         <div className="text-gray-400 text-xs">{task.status}</div>
@@ -1218,6 +1219,6 @@ Mark as Complete
 
 }
 
-export default projectPage
+export default ProjectPage
 
 

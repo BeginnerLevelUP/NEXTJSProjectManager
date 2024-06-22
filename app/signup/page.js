@@ -37,7 +37,59 @@ function LoginForm() {
     // Add your form submission logic here
   };
 
-  const fetchUser = async (email) => {
+
+
+  useEffect(() => {
+    const init = async () => {
+      const {  Input,Ripple,initTE, Sidenav, } = await import("tw-elements");
+      initTE({ Input,Ripple,Sidenav});
+    };
+    init();
+  }, []);
+
+    useEffect( () => { (
+      async () => {
+
+          const LocomotiveScroll = (await import('locomotive-scroll')).default
+
+          const locomotiveScroll = new LocomotiveScroll();
+      }
+    )()
+
+  }, [])
+
+useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const timeline = gsap.timeline({
+        scrollTrigger: {
+            trigger: document.documentElement,
+            scrub: true,
+            start: "top",
+            end: "200px",
+        }
+    });
+
+    timeline
+        .from(demo.current, {clipPath: `inset(50%)`, filter: "hue-rotate(180deg)", })
+        .to(demo.current, { clipPath: `inset(0%)`, filter: "hue-rotate(0deg)", })
+      
+
+});
+
+
+  useEffect(
+    ()=>{
+      const callProviders=async()=>{
+        const response =await getProviders()
+        setProviders(response)
+      }
+      callProviders()
+    },[]
+  )
+
+useEffect(() => {
+    const fetchUser = async (email) => {
     const userQuery = `query User($userId: ID!) {
       user(id: $userId) {
         _id
@@ -122,56 +174,6 @@ function LoginForm() {
     }
   };
 
-  useEffect(() => {
-    const init = async () => {
-      const {  Input,Ripple,initTE, Sidenav, } = await import("tw-elements");
-      initTE({ Input,Ripple,Sidenav});
-    };
-    init();
-  }, []);
-
-    useEffect( () => { (
-      async () => {
-
-          const LocomotiveScroll = (await import('locomotive-scroll')).default
-
-          const locomotiveScroll = new LocomotiveScroll();
-      }
-    )()
-
-  }, [])
-
-useLayoutEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const timeline = gsap.timeline({
-        scrollTrigger: {
-            trigger: document.documentElement,
-            scrub: true,
-            start: "top",
-            end: "200px",
-        }
-    });
-
-    timeline
-        .from(demo.current, {clipPath: `inset(50%)`, filter: "hue-rotate(180deg)", })
-        .to(demo.current, { clipPath: `inset(0%)`, filter: "hue-rotate(0deg)", })
-      
-
-});
-
-
-  useEffect(
-    ()=>{
-      const callProviders=async()=>{
-        const response =await getProviders()
-        setProviders(response)
-      }
-      callProviders()
-    },[]
-  )
-
-useEffect(() => {
   const fetchData = async () => {
     if (session) {
       try {
@@ -200,7 +202,7 @@ useEffect(() => {
 
   fetchData();
   router.push('/')
-}, [session]);
+}, [session,dispatch,router]);
 
 
   let [isOpen, setIsOpen] = useState(false)

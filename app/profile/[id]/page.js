@@ -3,10 +3,13 @@ import Nav from "@/app/components/nav"
 import { useState,useEffect } from "react"
 import DotLoader from "react-spinners/DotLoader"
 import { useRouter } from "next/navigation"
-const page = ({params}) => {
+import Image from "next/image"
+const Page = ({params}) => {
 const router=useRouter()
 const [userData, setUserData] = useState();
-const fetchUser=async()=>{
+
+ useEffect(() => {
+  const fetchUser=async()=>{
     const userQuery=`query User($userId: ID!) {
   user(id: $userId) {
     _id
@@ -95,7 +98,6 @@ const fetchUser=async()=>{
       return null;
     }
 }
- useEffect(() => {
     const fetchData = async () => {
       const data = await fetchUser();
       if (data) {
@@ -105,7 +107,7 @@ const fetchUser=async()=>{
 
     fetchData();
   }, [params.id]);
-console.log(userData)
+
 return (
     userData?(
     <>
@@ -117,7 +119,7 @@ return (
         <div className="">
           {/* Content */}
           <div className="flex flex-col gap-8 ">
-            <img src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844"
+            <Image src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844"
                       alt=""
                       className="h-12 w-12 rounded-full object-cover"
                     />
@@ -141,7 +143,7 @@ return (
       <div key={project._id} className="grid gap-4 md:grid-cols-1 md:gap-4 w-64" onClick={()=>{router.push(`/project/${project._id}`)}}>
         <div className=" rounded-md border border-solid bg-gray-100 p-6 md:p-6">
             <div className="flex items-center gap-x-2">
-              <img
+              <Image
                 src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844"
                 alt=""
                 className="h-12 w-12 rounded-full object-cover"
@@ -170,4 +172,4 @@ return (
   )
 }
 
-export default page
+export default Page
