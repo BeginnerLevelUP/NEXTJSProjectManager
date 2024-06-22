@@ -549,7 +549,7 @@ Object.values(providers).map((provider) => {
           Project Manager
         </h6>
         <p>
-Feel Free to Contatn Anytime
+Feel Free to Contact Anytime
         </p>
       </div>
 
