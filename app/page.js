@@ -301,7 +301,7 @@ useEffect(() => {
       {user?.associates?.map(( associate , index) => (
         <>
       
-    <Image onClick={()=>{router.push(`/profile/${associate?.email}`)}} src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt={associate.username} className="mb-4 inline-block h-40 w-40 rounded-full object-cover" />
+    <Image onClick={()=>{router.push(`/profile/${associate?.email}`)}} src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt={associate.username} className="mb-4 inline-block h-40 w-40 rounded-full object-cover" width={32} height={32} />
        
       
         </>

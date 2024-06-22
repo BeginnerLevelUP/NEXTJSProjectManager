@@ -1028,7 +1028,7 @@ addMembersToProject(currentProject._id, updatedMembers);
  {currentProject?.members && currentProject.members.length > 0 ? (
   currentProject.members.map(ass => (
     <div key={ass?._id} className="h-9 w-9">
-      <Image className="object-cover w-full h-full rounded-full"  src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt="avatar1" />
+      <Image className="object-cover w-full h-full rounded-full"  src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844" alt="avatar1" width={32} height={32} />
     </div>
   ))
 ) : (

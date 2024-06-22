@@ -122,6 +122,7 @@ return (
             <Image src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844"
                       alt=""
                       className="h-12 w-12 rounded-full object-cover"
+                      width={32} height={32}
                     />
             <h2 className="mb-8 text-3xl font-bold md:text-5xl">     {userData?.username} </h2>
             <p className="text-sm sm:text-base">
@@ -147,6 +148,7 @@ return (
                 src="https://firebasestorage.googleapis.com/v0/b/flowspark-1f3e0.appspot.com/o/Tailspark%20Images%2FPLaceholder%20Image%20Secondary.svg?alt=media&token=b8276192-19ff-4dd9-8750-80bc5f7d6844"
                 alt=""
                 className="h-12 w-12 rounded-full object-cover"
+                width={32} height={32}
               />
               <p className="text-sm font-semibold sm:text-base">{project.name}</p>
             </div>

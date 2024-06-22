@@ -15,6 +15,7 @@ const Page = () => {
   const router = useRouter()
   const { data: session } = useSession();
   const user = session?.user;
+  console.log(user)
   const [userData, setUserData] = useState();
   let [isOpen, setIsOpen] = useState(false)
   const [projectName,setProjectName]=useState('')
@@ -422,7 +423,7 @@ useEffect(() => {
       
         {/* <!--  Item --> */}
         <div className="mb-12 border border-solid border-[#cdcdcd] md:mb-8 lg:mb-10 " key={project._id}>
-          <Image src="https://assets.website-files.com/624380709031623bfe4aee60/6243807090316262904aee69_Placeholder%20Image%20-%20Landscape.svg" alt="" className="inline-block" />
+          <Image src="https://assets.website-files.com/624380709031623bfe4aee60/6243807090316262904aee69_Placeholder%20Image%20-%20Landscape.svg" alt="" className="inline-block" width={32} height={32} />
           <div className="px-5 py-8 sm:px-6">
             <h5 className="mb-3 text-xl font-bold">{project.name||'No Name'}</h5>
             <p className="flex-col text-[#808080]">{project.description||'No Description'}</p>
